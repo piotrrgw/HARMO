@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonogram A4 v1.1</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 15px; font-size: 12px; }
+        .no-print { background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+        th { background: #f0f0f0; }
+        .train-item { display: block; border-bottom: 1px solid #ddd; padding: 2px; }
+        .train-item:last-child { border: none; }
+        
+        @media print {
+            .no-print { display: none; }
+            @page { size: A4; margin: 10mm; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; }
+        }
+        footer { text-align: center; margin-top: 20px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <h2>Wczytaj dane</h2>
+        <input type="file" id="fIcs" accept=".ics"> Kalendarz<br><br>
+        <input type="file" id="fJson" accept=".json"> Baza pociągów
+        <button onclick="window.print()" style="margin-left:20px;">DRUKUJ A4 (Dwustronnie)</button>
+    </div>
+
+    <h2 style="text-align:center">Harmonogram Pracy i Obsługi Pociągów</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Służba</th>
+                <th>Godziny</th>
+                <th>Pociągi (Nr / Typ)</th>
+                <th>Miejsce Start / Koniec</th>
+                <th>Czas</th>
+            </tr>
+        </thead>
+        <tbody id="out"></tbody>
+    </table>
+
+    <footer>
+        Współautorzy: Piotr M 🚂 i Gemini | Wersja aplikacji: v1.1
+    </footer>
+
+    <script>
+        let events = [];
+        let db = {};
+
+        document.getElementById('fIcs').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (f) => { parseIcs(f.target.result); render(); };
+            reader.readAsText(e.target.files[0]);
+        };
+
+        document.getElementById('fJson').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (f) => { db = JSON.parse(f.target.result); render(); };
+            reader.readAsText(e.target.files[0]);
+        };
+
+        function parseIcs(data) {
+            events = [];
+            const parts = data.split('BEGIN:VEVENT');
+            parts.shift();
+            parts.forEach(p => {
+                const summary = p.match(/SUMMARY:(.*)/)?.[1]?.trim();
+                const start = p.match(/DTSTART;VALUE=DATE:(\d{8})/) || p.match(/DTSTART:(\d{8}T\d{6})/);
+                const end = p.match(/DTEND;VALUE=DATE:(\d{8})/) || p.match(/DTEND:(\d{8}T\d{6})/);
+                if(summary && start) events.push({ s: summary, dStart: start[1], dEnd: end ? end[1] : start[1] });
+            });
+            events.sort((a,b) => a.dStart.localeCompare(b.dStart));
+        }
+
+        function render() {
+            const tbody = document.getElementById('out');
+            tbody.innerHTML = '';
+            
+            events.forEach(ev => {
+                const dateRaw = ev.dStart.substring(0,8);
+                const dateFmt = `${dateRaw.substring(6,8)}.${dateRaw.substring(4,6)}.${dateRaw.substring(0,4)}`;
+                const dayStr = `${dateRaw.substring(0,4)}-${dateRaw.substring(4,6)}-${dateRaw.substring(6,8)}`;
+                
+                const d = db[ev.s];
+                
+                // Sprawdzanie dat (Zakres i Wyłączenia)
+                if(d) {
+                    if(d.validFrom && dayStr < d.validFrom) return;
+                    if(d.validUntil && dayStr > d.validUntil) return;
+                    if(d.excluded && d.excluded.includes(dayStr)) return;
+                }
+
+                let pociagiHtml = "-";
+                if(d && d.pociagi) {
+                    pociagiHtml = d.pociagi.map(p => `<div class="train-item">${p.nr} / <b>${p.typ}</b></div>`).join('');
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${dateFmt}</td>
+                    <td><b>${ev.s}</b></td>
+                    <td>${ev.dStart.includes('T') ? ev.dStart.substring(9,11)+':'+ev.dStart.substring(11,13) : 'Cały dzień'}</td>
+                    <td>${pociagiHtml}</td>
+                    <td>${d ? d.miejsce_rozpoczecia + ' / ' + d.miejsce_zakonczenia : '-'}</td>
+                    <td>-</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edytor Bazy Służb v1.1</title>
+    <style>
+        :root { --p-color: #0056b3; --bg: #f8f9fa; --txt: #212529; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--txt); padding: 10px; line-height: 1.4; }
+        main { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .section { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .train-row { display: flex; gap: 5px; margin-bottom: 5px; }
+        .btn { cursor: pointer; padding: 10px; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-add { background: #28a745; color: white; }
+        .btn-rem { background: #dc3545; color: white; padding: 5px 10px; }
+        .btn-main { background: var(--p-color); color: white; width: 100%; margin-top: 10px; }
+        
+        /* Kalendarz podglądu */
+        #calendarPreview { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: #ddd; border: 1px solid #ddd; margin-top: 10px; }
+        .cal-day { background: #fff; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
+        .cal-header { background: #eee; font-weight: bold; padding: 5px 0; text-align: center; font-size: 0.7rem; }
+        .active-day { background: #c3e6cb; border: 1px solid #28a745; }
+        .excluded-day { background: #f8d7da; text-decoration: line-through; color: #721c24; }
+        
+        footer { margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 10px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Edytor Służb v1.1</h1>
+    <div class="grid">
+        <section class="section">
+            <label for="sCode">Kod służby (np. KLK119):</label>
+            <input type="text" id="sCode" placeholder="np. KLK119">
+            
+            <label>Pociągi w służbie:</label>
+            <div id="trainsList">
+                <div class="train-row">
+                    <input type="text" placeholder="Nr poc." class="tNr">
+                    <select class="tType"><option value="PNP">PNP</option><option value="W">W</option></select>
+                </div>
+            </div>
+            <button class="btn btn-add" style="padding: 5px; font-size: 0.8rem;" onclick="addTrainRow()">+ Dodaj pociąg</button>
+            
+            <label style="margin-top:15px;">Miejsce startu / Końca:</label>
+            <div class="train-row">
+                <input type="text" id="sLoc" placeholder="Start">
+                <input type="text" id="eLoc" placeholder="Koniec">
+            </div>
+        </section>
+
+        <section class="section">
+            <label>Okres kursowania:</label>
+            <div class="train-row">
+                <input type="date" id="vFrom" onchange="updatePreview()">
+                <input type="date" id="vTo" onchange="updatePreview()">
+            </div>
+            
+            <label>Wyłączone daty (klikaj w kalendarzu lub wpisz):</label>
+            <input type="date" id="exDate">
+            <button class="btn btn-add" style="padding: 5px;" onclick="addExcludedDate()">Dodaj do wyłączeń</button>
+            <div id="excludedList" style="font-size: 0.8rem; margin-top: 5px;"></div>
+        </section>
+    </div>
+
+    <div class="section">
+        <label>Podgląd kursowania (Bieżący miesiąc):</label>
+        <div id="calendarPreview"></div>
+    </div>
+
+    <button class="btn btn-main" onclick="saveShift()">Zapisz służbę do bazy</button>
+    <button class="btn btn-main" style="background:#28a745" onclick="exportJSON()">Pobierz plik szczegoly_sluzb.json</button>
+
+    <div class="table-responsive" style="margin-top:20px;">
+        <table style="width:100%; border-collapse: collapse;" border="1">
+            <thead><tr><th>Kod</th><th>Pociągi</th><th>Zakres</th><th>Akcja</th></tr></thead>
+            <tbody id="dbTable"></tbody>
+        </table>
+    </div>
+</main>
+
+<footer>
+    Współautorzy: Piotr M 🚂 i Gemini | Wersja aplikacji: v1.1
+</footer>
+
+<script>
+    let db = {};
+    let excludedDates = [];
+
+    function addTrainRow() {
+        const div = document.createElement('div');
+        div.className = 'train-row';
+        div.innerHTML = `<input type="text" placeholder="Nr poc." class="tNr"><select class="tType"><option value="ppoc">ppoc</option><option value="wzmoc">wzmoc</option></select><button class="btn btn-rem" onclick="this.parentElement.remove()">X</button>`;
+        document.getElementById('trainsList').appendChild(div);
+    }
+
+    function addExcludedDate() {
+        const val = document.getElementById('exDate').value;
+        if(val && !excludedDates.includes(val)) {
+            excludedDates.push(val);
+            renderExcluded();
+            updatePreview();
+        }
+    }
+
+    function renderExcluded() {
+        document.getElementById('excludedList').innerText = "Wyłączone: " + excludedDates.join(", ");
+    }
+
+    function updatePreview() {
+        const container = document.getElementById('calendarPreview');
+        container.innerHTML = '';
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const from = document.getElementById('vFrom').value;
+        const to = document.getElementById('vTo').value;
+
+        const headers = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'];
+        headers.forEach(h => {
+            const d = document.createElement('div'); d.className='cal-header'; d.innerText=h; container.appendChild(d);
+        });
+
+        for(let i=1; i<=daysInMonth; i++) {
+            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+            const div = document.createElement('div');
+            div.className = 'cal-day';
+            div.innerText = i;
+            
+            if(from && to && dateStr >= from && dateStr <= to) {
+                div.classList.add('active-day');
+            }
+            if(excludedDates.includes(dateStr)) {
+                div.classList.add('excluded-day');
+            }
+            container.appendChild(div);
+        }
+    }
+
+    function saveShift() {
+        const code = document.getElementById('sCode').value;
+        if(!code) return alert("Podaj kod!");
+        
+        const trains = [];
+        document.querySelectorAll('.train-row').forEach(row => {
+            const nr = row.querySelector('.tNr')?.value;
+            if(nr) trains.push({ nr: nr, typ: row.querySelector('.tType').value });
+        });
+
+        db[code] = {
+            pociagi: trains,
+            miejsce_rozpoczecia: document.getElementById('sLoc').value,
+            miejsce_zakonczenia: document.getElementById('eLoc').value,
+            validFrom: document.getElementById('vFrom').value,
+            validUntil: document.getElementById('vTo').value,
+            excluded: [...excludedDates]
+        };
+        renderTable();
+        excludedDates = [];
+        updatePreview();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('dbTable');
+        tbody.innerHTML = '';
+        for(let key in db) {
+            tbody.innerHTML += `<tr><td>${key}</td><td>${db[key].pociagi.length} pociągi</td><td>${db[key].validFrom} - ${db[key].validUntil}</td><td><button onclick="delete db['${key}']; renderTable()">Usuń</button></td></tr>`;
+        }
+    }
+
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(db, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = "szczegoly_sluzb.json"; a.click();
+    }
+
+    updatePreview();
+</script>
+</body>
+</html>
