@@ -2,186 +2,234 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edytor Bazy Służb v1.1</title>
+    <title>Edytor v1.29 - Widok Excela i Duplikowanie</title>
     <style>
-        :root { --p-color: #0056b3; --bg: #f8f9fa; --txt: #212529; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--txt); padding: 10px; line-height: 1.4; }
-        main { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-        .section { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        .train-row { display: flex; gap: 5px; margin-bottom: 5px; }
-        .btn { cursor: pointer; padding: 10px; border: none; border-radius: 4px; font-weight: bold; }
-        .btn-add { background: #28a745; color: white; }
-        .btn-rem { background: #dc3545; color: white; padding: 5px 10px; }
-        .btn-main { background: var(--p-color); color: white; width: 100%; margin-top: 10px; }
+        :root { --primary: #0056b3; --success: #28a745; --danger: #d63031; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         
-        /* Kalendarz podglądu */
-        #calendarPreview { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: #ddd; border: 1px solid #ddd; margin-top: 10px; }
-        .cal-day { background: #fff; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
-        .cal-header { background: #eee; font-weight: bold; padding: 5px 0; text-align: center; font-size: 0.7rem; }
-        .active-day { background: #c3e6cb; border: 1px solid #28a745; }
-        .excluded-day { background: #f8d7da; text-decoration: line-through; color: #721c24; }
+        .admin-header { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         
-        footer { margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 10px; font-size: 0.8rem; }
+        .entry-card { border: 2px solid #dee2e6; padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; position: relative; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        
+        .days-selector { display: flex; gap: 4px; margin-top: 5px; }
+        .day-btn { padding: 6px 10px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .day-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        
+        .pociagi-zone { background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px dotted #ccc; }
+        .p-row { display: flex; gap: 8px; margin-bottom: 5px; }
+        
+        /* WIDOK EXCELA */
+        .excel-view { margin-top: 40px; border-top: 3px solid var(--primary); padding-top: 20px; }
+        .excel-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .excel-table th { background: #343a40; color: #fff; padding: 10px; text-align: left; }
+        .excel-table td { border: 1px solid #dee2e6; padding: 8px; }
+        .excel-table tr:nth-child(even) { background: #f8f9fa; }
+        
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #fff; }
+        .btn-copy { background: #6c757d; font-size: 11px; padding: 4px 8px; }
+        .btn-del { background: var(--danger); font-size: 11px; padding: 4px 8px; }
+        
+        input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        .footer-info { margin-top: 20px; font-size: 11px; color: #666; text-align: center; }
     </style>
 </head>
 <body>
-<main>
-    <h1>Edytor Służb v1.1</h1>
-    <div class="grid">
-        <section class="section">
-            <label for="sCode">Kod służby (np. KLK119):</label>
-            <input type="text" id="sCode" placeholder="np. KLK119">
-            
-            <label>Pociągi w służbie:</label>
-            <div id="trainsList">
-                <div class="train-row">
-                    <input type="text" placeholder="Nr poc." class="tNr">
-                    <select class="tType"><option value="PNP">PNP</option><option value="W">W</option></select>
-                </div>
-            </div>
-            <button class="btn btn-add" style="padding: 5px; font-size: 0.8rem;" onclick="addTrainRow()">+ Dodaj pociąg</button>
-            
-            <label style="margin-top:15px;">Miejsce startu / Końca:</label>
-            <div class="train-row">
-                <input type="text" id="sLoc" placeholder="Start">
-                <input type="text" id="eLoc" placeholder="Koniec">
-            </div>
-        </section>
 
-        <section class="section">
-            <label>Okres kursowania:</label>
-            <div class="train-row">
-                <input type="date" id="vFrom" onchange="updatePreview()">
-                <input type="date" id="vTo" onchange="updatePreview()">
-            </div>
-            
-            <label>Wyłączone daty (klikaj w kalendarzu lub wpisz):</label>
-            <input type="date" id="exDate">
-            <button class="btn btn-add" style="padding: 5px;" onclick="addExcludedDate()">Dodaj do wyłączeń</button>
-            <div id="excludedList" style="font-size: 0.8rem; margin-top: 5px;"></div>
-        </section>
+<div class="container">
+    <div class="admin-header">
+        <div>
+            <h2 style="margin:0">🚂 Kreator Bazy v1.29</h2>
+            <p style="margin:5px 0 0 0; font-size:12px; color:#666;">Zarządzaj służbami i pociągami</p>
+        </div>
+        <div>
+            <label><b>Data wydania harmonogramu:</b></label><br>
+            <input type="date" id="adminDate" style="font-size:16px; font-weight:bold;">
+        </div>
     </div>
 
-    <div class="section">
-        <label>Podgląd kursowania (Bieżący miesiąc):</label>
-        <div id="calendarPreview"></div>
+    <div id="formList"></div>
+    
+    <div style="display:flex; gap:10px;">
+        <button class="btn" style="background:var(--success); flex:1;" onclick="addEntry()">+ DODAJ NOWĄ SŁUŻBĘ</button>
+        <button class="btn" style="background:var(--primary); flex:1;" onclick="exportJSON()">💾 EKSPORTUJ PLIK .JSON</button>
     </div>
 
-    <button class="btn btn-main" onclick="saveShift()">Zapisz służbę do bazy</button>
-    <button class="btn btn-main" style="background:#28a745" onclick="exportJSON()">Pobierz plik szczegoly_sluzb.json</button>
-
-    <div class="table-responsive" style="margin-top:20px;">
-        <table style="width:100%; border-collapse: collapse;" border="1">
-            <thead><tr><th>Kod</th><th>Pociągi</th><th>Zakres</th><th>Akcja</th></tr></thead>
-            <tbody id="dbTable"></tbody>
+    <div class="excel-view">
+        <h3 style="margin:0">📊 Podgląd Tabelaryczny (A'la Excel)</h3>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>Kod</th>
+                    <th>Start</th>
+                    <th>Dni kursowania</th>
+                    <th>Zakres</th>
+                    <th>Pociągi</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody id="excelBody"></tbody>
         </table>
     </div>
-</main>
 
-<footer>
-    Współautorzy: Piotr M 🚂 i Gemini | Wersja aplikacji: v1.1
-</footer>
+    <div class="footer-info">Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.29</div>
+</div>
 
 <script>
-    let db = {};
-    let excludedDates = [];
+    let dbData = [];
 
-    function addTrainRow() {
-        const div = document.createElement('div');
-        div.className = 'train-row';
-        div.innerHTML = `<input type="text" placeholder="Nr poc." class="tNr"><select class="tType"><option value="ppoc">ppoc</option><option value="wzmoc">wzmoc</option></select><button class="btn btn-rem" onclick="this.parentElement.remove()">X</button>`;
-        document.getElementById('trainsList').appendChild(div);
-    }
-
-    function addExcludedDate() {
-        const val = document.getElementById('exDate').value;
-        if(val && !excludedDates.includes(val)) {
-            excludedDates.push(val);
-            renderExcluded();
-            updatePreview();
-        }
-    }
-
-    function renderExcluded() {
-        document.getElementById('excludedList').innerText = "Wyłączone: " + excludedDates.join(", ");
-    }
-
-    function updatePreview() {
-        const container = document.getElementById('calendarPreview');
-        container.innerHTML = '';
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        const from = document.getElementById('vFrom').value;
-        const to = document.getElementById('vTo').value;
-
-        const headers = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'];
-        headers.forEach(h => {
-            const d = document.createElement('div'); d.className='cal-header'; d.innerText=h; container.appendChild(d);
-        });
-
-        for(let i=1; i<=daysInMonth; i++) {
-            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-            const div = document.createElement('div');
-            div.className = 'cal-day';
-            div.innerText = i;
-            
-            if(from && to && dateStr >= from && dateStr <= to) {
-                div.classList.add('active-day');
-            }
-            if(excludedDates.includes(dateStr)) {
-                div.classList.add('excluded-day');
-            }
-            container.appendChild(div);
-        }
-    }
-
-    function saveShift() {
-        const code = document.getElementById('sCode').value;
-        if(!code) return alert("Podaj kod!");
-        
-        const trains = [];
-        document.querySelectorAll('.train-row').forEach(row => {
-            const nr = row.querySelector('.tNr')?.value;
-            if(nr) trains.push({ nr: nr, typ: row.querySelector('.tType').value });
-        });
-
-        db[code] = {
-            pociagi: trains,
-            miejsce_rozpoczecia: document.getElementById('sLoc').value,
-            miejsce_zakonczenia: document.getElementById('eLoc').value,
-            validFrom: document.getElementById('vFrom').value,
-            validUntil: document.getElementById('vTo').value,
-            excluded: [...excludedDates]
+    function addEntry(data = null) {
+        const id = Date.now() + Math.random();
+        const entry = {
+            id: id,
+            kod: data ? data.kod : "",
+            miejsce: data ? data.miejsce : "",
+            from: data ? data.from : "",
+            until: data ? data.until : "",
+            days: data ? data.days : [1,2,3,4,5],
+            pociagi: data ? JSON.parse(JSON.stringify(data.pociagi)) : []
         };
-        renderTable();
-        excludedDates = [];
-        updatePreview();
+        
+        renderEntryCard(entry);
+        updateExcel();
     }
 
-    function renderTable() {
-        const tbody = document.getElementById('dbTable');
-        tbody.innerHTML = '';
-        for(let key in db) {
-            tbody.innerHTML += `<tr><td>${key}</td><td>${db[key].pociagi.length} pociągi</td><td>${db[key].validFrom} - ${db[key].validUntil}</td><td><button onclick="delete db['${key}']; renderTable()">Usuń</button></td></tr>`;
-        }
+    function renderEntryCard(e) {
+        const div = document.createElement('div');
+        div.className = 'entry-card';
+        div.id = `card-${e.id}`;
+        div.innerHTML = `
+            <button class="btn btn-del" style="float:right" onclick="removeEntry('${e.id}')">USUŃ</button>
+            <h3>Służba: <input type="text" value="${e.kod}" placeholder="KOD" oninput="updateVal('${e.id}', 'kod', this.value)"></h3>
+            <div class="grid">
+                <div>
+                    <label>Miejsce startu:</label><br>
+                    <input type="text" value="${e.miejsce}" style="width:90%" oninput="updateVal('${e.id}', 'miejsce', this.value)">
+                </div>
+                <div>
+                    <label>Obowiązuje od - do:</label><br>
+                    <input type="date" value="${e.from}" oninput="updateVal('${e.id}', 'from', this.value)">
+                    <input type="date" value="${e.until}" oninput="updateVal('${e.id}', 'until', this.value)">
+                </div>
+                <div>
+                    <label>Dni tygodnia:</label>
+                    <div class="days-selector">
+                        ${['Nd','Pn','Wt','Śr','Cz','Pt','Sb'].map((n, i) => 
+                            `<button class="day-btn ${e.days.includes(i) ? 'active' : ''}" onclick="toggleDay(this, '${e.id}', ${i})">${n}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+            <div class="pociagi-zone">
+                <strong>Lista pociągów:</strong>
+                <div id="pocs-${e.id}"></div>
+                <button class="btn" style="background:#6c757d; padding:3px 8px; font-size:11px;" onclick="addPociagRow('${e.id}')">+ Dodaj pociąg</button>
+            </div>
+        `;
+        document.getElementById('formList').appendChild(div);
+        dbData.push(e);
+        e.pociagi.forEach(p => addPociagRow(e.id, p.nr, p.typ));
+    }
+
+    function addPociagRow(eId, nr="", typ="PNP") {
+        const cont = document.getElementById(`pocs-${eId}`);
+        const row = document.createElement('div');
+        row.className = 'p-row';
+        row.innerHTML = `
+            <input type="text" placeholder="Numer" value="${nr}" oninput="syncPociagi('${eId}')">
+            <select onchange="syncPociagi('${eId}')">
+                <option value="PNP" ${typ==='PNP'?'selected':''}>PNP</option>
+                <option value="W" ${typ==='W'?'selected':''}>W</option>
+                <option value="L" ${typ==='L'?'selected':''}>L</option>
+            </select>
+            <button onclick="this.parentElement.remove(); syncPociagi('${eId}')">✖</button>
+        `;
+        cont.appendChild(row);
+        syncPociagi(eId);
+    }
+
+    function toggleDay(btn, eId, day) {
+        btn.classList.toggle('active');
+        const entry = dbData.find(x => x.id == eId);
+        if(entry.days.includes(day)) entry.days = entry.days.filter(d => d !== day);
+        else entry.days.push(day);
+        updateExcel();
+    }
+
+    function updateVal(id, field, val) {
+        const entry = dbData.find(x => x.id == id);
+        entry[field] = val;
+        updateExcel();
+    }
+
+    function syncPociagi(id) {
+        const entry = dbData.find(x => x.id == id);
+        const rows = document.getElementById(`pocs-${id}`).querySelectorAll('.p-row');
+        entry.pociagi = Array.from(rows).map(r => ({
+            nr: r.querySelector('input').value,
+            typ: r.querySelector('select').value
+        }));
+        updateExcel();
+    }
+
+    function removeEntry(id) {
+        dbData = dbData.filter(x => x.id != id);
+        document.getElementById(`card-${id}`).remove();
+        updateExcel();
+    }
+
+    function duplicate(id) {
+        const entry = dbData.find(x => x.id == id);
+        addEntry(entry);
+    }
+
+    function updateExcel() {
+        const body = document.getElementById('excelBody');
+        body.innerHTML = "";
+        dbData.forEach(e => {
+            const tr = document.createElement('tr');
+            const dayNames = ['Nd','Pn','Wt','Śr','Cz','Pt','Sb'];
+            const activeDays = e.days.sort().map(d => dayNames[d]).join(', ');
+            
+            tr.innerHTML = `
+                <td><b>${e.kod || '---'}</b></td>
+                <td>${e.miejsce || '---'}</td>
+                <td><small>${activeDays}</small></td>
+                <td><small>${e.from} / ${e.until}</small></td>
+                <td>${e.pociagi.map(p => `${p.nr}(${p.typ})`).join(', ')}</td>
+                <td>
+                    <button class="btn btn-copy" onclick="duplicate('${e.id}')">DUPLIKUJ</button>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
     }
 
     function exportJSON() {
-        const blob = new Blob([JSON.stringify(db, null, 2)], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = "szczegoly_sluzb.json"; a.click();
-    }
+        const adminDate = document.getElementById('adminDate').value;
+        const finalObj = {
+            metadata: { generatedAt: adminDate, version: "1.29" },
+            sluzby: {}
+        };
+        
+        dbData.forEach(e => {
+            if(!e.kod) return;
+            finalObj.sluzby[e.kod] = {
+                miejsce_rozpoczecia: e.miejsce,
+                validFrom: e.from,
+                validUntil: e.until,
+                days: e.days,
+                pociagi: e.pociagi
+            };
+        });
 
-    updatePreview();
+        const blob = new Blob([JSON.stringify(finalObj, null, 2)], {type: "application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `szczegoly_sluzb_${adminDate || 'nowy'}.json`;
+        a.click();
+    }
 </script>
 </body>
 </html>
