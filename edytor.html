@@ -2,11 +2,15 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Edytor v1.31 - Import i Edycja</title>
+    <title>Edytor v1.33 - Kalendarz Wyboru Dat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pl.js"></script>
+    
     <style>
         :root { --primary: #0056b3; --success: #28a745; --danger: #d63031; --bg: #f4f7f6; }
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
         .container { max-width: 1300px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         
         .admin-header { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--primary); }
@@ -21,18 +25,24 @@
         .pociagi-zone { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; border: 1px dotted #ccc; }
         .p-row { display: flex; gap: 8px; margin-bottom: 5px; }
         
+        /* Styl pól daty z kalendarzem */
+        .date-picker-input { 
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E") no-repeat right 10px center;
+            cursor: pointer;
+        }
+
         .excel-view { margin-top: 40px; border-top: 3px solid var(--primary); padding-top: 20px; }
         .excel-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         .excel-table th { background: #343a40; color: #fff; padding: 10px; text-align: left; }
         .excel-table td { border: 1px solid #dee2e6; padding: 8px; }
         
         .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #fff; transition: 0.2s; }
-        .btn-import { background: #6f42c1; } /* Fioletowy dla importu */
+        .btn-import { background: #6f42c1; }
         .btn-copy { background: #6c757d; font-size: 11px; padding: 4px 8px; }
         .btn-del { background: var(--danger); font-size: 11px; padding: 4px 8px; }
         
         input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; }
-        label { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; display: block; margin-bottom: 4px; }
         .footer-info { margin-top: 20px; font-size: 11px; color: #666; text-align: center; }
     </style>
 </head>
@@ -41,18 +51,18 @@
 <div class="container">
     <div class="admin-header">
         <div>
-            <h2 style="margin:0">🚂 Kreator Bazy v1.31</h2>
-            <p style="margin:5px 0 0 0; font-size:12px; color:#666;">Importuj, duplikuj i edytuj harmonogram</p>
+            <h2 style="margin:0">🚂 Kreator Bazy v1.33</h2>
+            <p style="margin:5px 0 0 0; font-size:12px; color:#666;">Wybieraj daty wyłączeń i dodatków bezpośrednio z kalendarza</p>
         </div>
         <div style="text-align: right;">
-            <label>Data publikacji:</label><br>
+            <label>Data publikacji:</label>
             <input type="date" id="adminDate" style="width: 200px; font-weight: bold;">
         </div>
     </div>
 
     <div style="background: #fdfdfe; border: 1px solid #dee2e6; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
         <span style="font-weight: bold; font-size: 13px;">AKCJE BAZY:</span>
-        <button class="btn btn-import" onclick="document.getElementById('importFile').click()">📂 IMPORTUJ ISTNIEJĄCY JSON</button>
+        <button class="btn btn-import" onclick="document.getElementById('importFile').click()">📂 IMPORTUJ PLIK JSON</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
         <button class="btn" style="background:var(--success)" onclick="addEntry()">+ DODAJ NOWĄ SŁUŻBĘ</button>
         <button class="btn" style="background:var(--primary)" onclick="exportJSON()">💾 EKSPORTUJ I POBIERZ JSON</button>
@@ -61,7 +71,7 @@
     <div id="formList"></div>
 
     <div class="excel-view">
-        <h3 style="margin:0">📊 Podgląd Tabelaryczny (Excel View)</h3>
+        <h3 style="margin:0">📊 Podgląd Tabelaryczny</h3>
         <table class="excel-table">
             <thead>
                 <tr>
@@ -69,7 +79,7 @@
                     <th>Start</th>
                     <th>Dni Tyg.</th>
                     <th>Zakres Dat</th>
-                    <th>Wyjątki</th>
+                    <th>Wyłączenia / Dodatki</th>
                     <th>Pociągi</th>
                     <th>Akcje</th>
                 </tr>
@@ -78,20 +88,32 @@
         </table>
     </div>
 
-    <div class="footer-info">Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.31</div>
+    <div class="footer-info">Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.33</div>
 </div>
 
 <script>
     let dbData = [];
+
+    // Konfiguracja kalendarza multi-date
+    const fpConfig = {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        locale: "pl",
+        conjunction: ", ",
+        onChange: function(selectedDates, dateStr, instance) {
+            const entryId = instance.element.dataset.id;
+            const field = instance.element.dataset.field;
+            updateVal(entryId, field, dateStr);
+        }
+    };
 
     function importJSON(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const imported = JSON.parse(e.target.result);
-                const sluzby = imported.sluzby || imported; // Obsługa obu formatów
+                const sluzby = imported.sluzby || imported;
                 
-                // Czyścimy obecny widok
                 dbData = [];
                 document.getElementById('formList').innerHTML = "";
                 
@@ -113,10 +135,8 @@
                         pociagi: s.pociagi || []
                     });
                 }
-                alert("Baza została pomyślnie zaimportowana!");
             } catch (err) {
                 alert("Błąd podczas wczytywania pliku JSON!");
-                console.error(err);
             }
         };
         reader.readAsText(input.files[0]);
@@ -156,9 +176,15 @@
                 <div><label>Zakres:</label><div style="display:flex; gap:5px;"><input type="date" value="${e.from}" oninput="updateVal('${e.id}', 'from', this.value)"><input type="date" value="${e.until}" oninput="updateVal('${e.id}', 'until', this.value)"></div></div>
                 <div><label>Dni Tyg.:</label><div class="days-selector">${['Nd','Pn','Wt','Śr','Cz','Pt','Sb'].map((n, i) => `<button class="day-btn ${e.days.includes(i) ? 'active' : ''}" onclick="toggleDay(this, '${e.id}', ${i})">${n}</button>`).join('')}</div></div>
             </div>
-            <div class="grid" style="margin-top:10px;">
-                <div><label>Wyłączenia (CSV):</label><input type="text" value="${e.excluded}" oninput="updateVal('${e.id}', 'excluded', this.value)"></div>
-                <div><label>Dodatki (CSV):</label><input type="text" value="${e.additional}" oninput="updateVal('${e.id}', 'additional', this.value)"></div>
+            <div class="grid" style="margin-top:15px;">
+                <div>
+                    <label>Wyłączenia (Kliknij aby wybrać daty):</label>
+                    <input type="text" class="date-picker-input" data-id="${e.id}" data-field="excluded" value="${e.excluded}" placeholder="Wybierz dni wolne...">
+                </div>
+                <div>
+                    <label>Dodatki (Kliknij aby wybrać daty):</label>
+                    <input type="text" class="date-picker-input" data-id="${e.id}" data-field="additional" value="${e.additional}" placeholder="Wybierz dodatkowe dni...">
+                </div>
             </div>
             <div class="pociagi-zone">
                 <div id="pocs-${e.id}"></div>
@@ -166,6 +192,15 @@
             </div>
         `;
         document.getElementById('formList').appendChild(div);
+        
+        // Inicjalizacja kalendarzy dla tej karty
+        div.querySelectorAll('.date-picker-input').forEach(el => {
+            flatpickr(el, {
+                ...fpConfig,
+                defaultDate: el.value ? el.value.split(', ') : []
+            });
+        });
+
         e.pociagi.forEach(p => addPociagRow(e.id, p.nr, p.typ));
     }
 
@@ -196,8 +231,10 @@
 
     function updateVal(id, field, val) {
         const entry = dbData.find(x => x.id == id);
-        if(entry) entry[field] = val;
-        updateExcel();
+        if(entry) {
+            entry[field] = val;
+            updateExcel();
+        }
     }
 
     function syncPociagi(id) {
@@ -233,7 +270,10 @@
                 <td>${e.miejsce || '---'}</td>
                 <td><small>${e.days.sort().map(d => dayNames[d]).join(', ')}</small></td>
                 <td><small>${e.from || '...'} / ${e.until || '...'}</small></td>
-                <td><small>${e.excluded || ''}</small></td>
+                <td>
+                    ${e.excluded ? `<span style="color:red; font-size:10px;">Wył: ${e.excluded}</span><br>` : ''}
+                    ${e.additional ? `<span style="color:green; font-size:10px;">Dod: ${e.additional}</span>` : ''}
+                </td>
                 <td><small>${e.pociagi.map(p => `${p.nr}(${p.typ})`).join(', ')}</small></td>
                 <td><button class="btn btn-copy" onclick="duplicate('${e.id}')">KOPIUJ</button></td>
             `;
@@ -244,7 +284,7 @@
     function exportJSON() {
         const adminDate = document.getElementById('adminDate').value;
         const finalObj = {
-            metadata: { generatedAt: adminDate, version: "1.31", author: "Piotr M 🚂" },
+            metadata: { generatedAt: adminDate, version: "1.33", author: "Piotr M 🚂" },
             sluzby: {}
         };
         dbData.forEach(e => {
@@ -254,8 +294,8 @@
                 validFrom: e.from,
                 validUntil: e.until,
                 days: e.days,
-                excluded: e.excluded.split(',').map(s => s.trim()).filter(s => s !== ""),
-                additional: e.additional.split(',').map(s => s.trim()).filter(s => s !== ""),
+                excluded: e.excluded ? e.excluded.split(', ') : [],
+                additional: e.additional ? e.additional.split(', ') : [],
                 pociagi: e.pociagi
             };
         });
