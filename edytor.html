@@ -2,36 +2,37 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Edytor v1.29 - Widok Excela i Duplikowanie</title>
+    <title>Edytor v1.31 - Import i Edycja</title>
     <style>
-        :root { --primary: #0056b3; --success: #28a745; --danger: #d63031; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        :root { --primary: #0056b3; --success: #28a745; --danger: #d63031; --bg: #f4f7f6; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 1300px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         
-        .admin-header { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--primary); }
         
-        .entry-card { border: 2px solid #dee2e6; padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; position: relative; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .entry-card { border: 1px solid #dee2e6; padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; position: relative; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         
         .days-selector { display: flex; gap: 4px; margin-top: 5px; }
-        .day-btn { padding: 6px 10px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .day-btn { padding: 6px 10px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .day-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
         
-        .pociagi-zone { background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px dotted #ccc; }
+        .pociagi-zone { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; border: 1px dotted #ccc; }
         .p-row { display: flex; gap: 8px; margin-bottom: 5px; }
         
-        /* WIDOK EXCELA */
         .excel-view { margin-top: 40px; border-top: 3px solid var(--primary); padding-top: 20px; }
-        .excel-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .excel-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         .excel-table th { background: #343a40; color: #fff; padding: 10px; text-align: left; }
         .excel-table td { border: 1px solid #dee2e6; padding: 8px; }
-        .excel-table tr:nth-child(even) { background: #f8f9fa; }
         
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #fff; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #fff; transition: 0.2s; }
+        .btn-import { background: #6f42c1; } /* Fioletowy dla importu */
         .btn-copy { background: #6c757d; font-size: 11px; padding: 4px 8px; }
         .btn-del { background: var(--danger); font-size: 11px; padding: 4px 8px; }
         
-        input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; }
+        label { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
         .footer-info { margin-top: 20px; font-size: 11px; color: #666; text-align: center; }
     </style>
 </head>
@@ -40,31 +41,35 @@
 <div class="container">
     <div class="admin-header">
         <div>
-            <h2 style="margin:0">🚂 Kreator Bazy v1.29</h2>
-            <p style="margin:5px 0 0 0; font-size:12px; color:#666;">Zarządzaj służbami i pociągami</p>
+            <h2 style="margin:0">🚂 Kreator Bazy v1.31</h2>
+            <p style="margin:5px 0 0 0; font-size:12px; color:#666;">Importuj, duplikuj i edytuj harmonogram</p>
         </div>
-        <div>
-            <label><b>Data wydania harmonogramu:</b></label><br>
-            <input type="date" id="adminDate" style="font-size:16px; font-weight:bold;">
+        <div style="text-align: right;">
+            <label>Data publikacji:</label><br>
+            <input type="date" id="adminDate" style="width: 200px; font-weight: bold;">
         </div>
+    </div>
+
+    <div style="background: #fdfdfe; border: 1px solid #dee2e6; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+        <span style="font-weight: bold; font-size: 13px;">AKCJE BAZY:</span>
+        <button class="btn btn-import" onclick="document.getElementById('importFile').click()">📂 IMPORTUJ ISTNIEJĄCY JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+        <button class="btn" style="background:var(--success)" onclick="addEntry()">+ DODAJ NOWĄ SŁUŻBĘ</button>
+        <button class="btn" style="background:var(--primary)" onclick="exportJSON()">💾 EKSPORTUJ I POBIERZ JSON</button>
     </div>
 
     <div id="formList"></div>
-    
-    <div style="display:flex; gap:10px;">
-        <button class="btn" style="background:var(--success); flex:1;" onclick="addEntry()">+ DODAJ NOWĄ SŁUŻBĘ</button>
-        <button class="btn" style="background:var(--primary); flex:1;" onclick="exportJSON()">💾 EKSPORTUJ PLIK .JSON</button>
-    </div>
 
     <div class="excel-view">
-        <h3 style="margin:0">📊 Podgląd Tabelaryczny (A'la Excel)</h3>
+        <h3 style="margin:0">📊 Podgląd Tabelaryczny (Excel View)</h3>
         <table class="excel-table">
             <thead>
                 <tr>
                     <th>Kod</th>
                     <th>Start</th>
-                    <th>Dni kursowania</th>
-                    <th>Zakres</th>
+                    <th>Dni Tyg.</th>
+                    <th>Zakres Dat</th>
+                    <th>Wyjątki</th>
                     <th>Pociągi</th>
                     <th>Akcje</th>
                 </tr>
@@ -73,11 +78,49 @@
         </table>
     </div>
 
-    <div class="footer-info">Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.29</div>
+    <div class="footer-info">Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.31</div>
 </div>
 
 <script>
     let dbData = [];
+
+    function importJSON(input) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                const sluzby = imported.sluzby || imported; // Obsługa obu formatów
+                
+                // Czyścimy obecny widok
+                dbData = [];
+                document.getElementById('formList').innerHTML = "";
+                
+                if (imported.metadata && imported.metadata.generatedAt) {
+                    document.getElementById('adminDate').value = imported.metadata.generatedAt;
+                }
+
+                for (let kod in sluzby) {
+                    if (kod === "metadata") continue;
+                    const s = sluzby[kod];
+                    addEntry({
+                        kod: kod,
+                        miejsce: s.miejsce_rozpoczecia || "",
+                        from: s.validFrom || "",
+                        until: s.validUntil || "",
+                        days: s.days || [1,2,3,4,5],
+                        excluded: Array.isArray(s.excluded) ? s.excluded.join(', ') : (s.excluded || ""),
+                        additional: Array.isArray(s.additional) ? s.additional.join(', ') : (s.additional || ""),
+                        pociagi: s.pociagi || []
+                    });
+                }
+                alert("Baza została pomyślnie zaimportowana!");
+            } catch (err) {
+                alert("Błąd podczas wczytywania pliku JSON!");
+                console.error(err);
+            }
+        };
+        reader.readAsText(input.files[0]);
+    }
 
     function addEntry(data = null) {
         const id = Date.now() + Math.random();
@@ -87,10 +130,13 @@
             miejsce: data ? data.miejsce : "",
             from: data ? data.from : "",
             until: data ? data.until : "",
-            days: data ? data.days : [1,2,3,4,5],
+            days: data ? [...data.days] : [1,2,3,4,5],
+            excluded: data ? data.excluded : "",
+            additional: data ? data.additional : "",
             pociagi: data ? JSON.parse(JSON.stringify(data.pociagi)) : []
         };
         
+        dbData.push(entry);
         renderEntryCard(entry);
         updateExcel();
     }
@@ -100,35 +146,26 @@
         div.className = 'entry-card';
         div.id = `card-${e.id}`;
         div.innerHTML = `
-            <button class="btn btn-del" style="float:right" onclick="removeEntry('${e.id}')">USUŃ</button>
-            <h3>Służba: <input type="text" value="${e.kod}" placeholder="KOD" oninput="updateVal('${e.id}', 'kod', this.value)"></h3>
+            <div style="position: absolute; right: 20px; top: 20px;">
+                <button class="btn btn-copy" onclick="duplicate('${e.id}')">DUPLIKUJ</button>
+                <button class="btn btn-del" onclick="removeEntry('${e.id}')">USUŃ</button>
+            </div>
+            <h3>Służba: <input type="text" value="${e.kod}" placeholder="KOD" oninput="updateVal('${e.id}', 'kod', this.value)" style="width: 250px;"></h3>
             <div class="grid">
-                <div>
-                    <label>Miejsce startu:</label><br>
-                    <input type="text" value="${e.miejsce}" style="width:90%" oninput="updateVal('${e.id}', 'miejsce', this.value)">
-                </div>
-                <div>
-                    <label>Obowiązuje od - do:</label><br>
-                    <input type="date" value="${e.from}" oninput="updateVal('${e.id}', 'from', this.value)">
-                    <input type="date" value="${e.until}" oninput="updateVal('${e.id}', 'until', this.value)">
-                </div>
-                <div>
-                    <label>Dni tygodnia:</label>
-                    <div class="days-selector">
-                        ${['Nd','Pn','Wt','Śr','Cz','Pt','Sb'].map((n, i) => 
-                            `<button class="day-btn ${e.days.includes(i) ? 'active' : ''}" onclick="toggleDay(this, '${e.id}', ${i})">${n}</button>`
-                        ).join('')}
-                    </div>
-                </div>
+                <div><label>Start:</label><input type="text" value="${e.miejsce}" oninput="updateVal('${e.id}', 'miejsce', this.value)"></div>
+                <div><label>Zakres:</label><div style="display:flex; gap:5px;"><input type="date" value="${e.from}" oninput="updateVal('${e.id}', 'from', this.value)"><input type="date" value="${e.until}" oninput="updateVal('${e.id}', 'until', this.value)"></div></div>
+                <div><label>Dni Tyg.:</label><div class="days-selector">${['Nd','Pn','Wt','Śr','Cz','Pt','Sb'].map((n, i) => `<button class="day-btn ${e.days.includes(i) ? 'active' : ''}" onclick="toggleDay(this, '${e.id}', ${i})">${n}</button>`).join('')}</div></div>
+            </div>
+            <div class="grid" style="margin-top:10px;">
+                <div><label>Wyłączenia (CSV):</label><input type="text" value="${e.excluded}" oninput="updateVal('${e.id}', 'excluded', this.value)"></div>
+                <div><label>Dodatki (CSV):</label><input type="text" value="${e.additional}" oninput="updateVal('${e.id}', 'additional', this.value)"></div>
             </div>
             <div class="pociagi-zone">
-                <strong>Lista pociągów:</strong>
                 <div id="pocs-${e.id}"></div>
-                <button class="btn" style="background:#6c757d; padding:3px 8px; font-size:11px;" onclick="addPociagRow('${e.id}')">+ Dodaj pociąg</button>
+                <button class="btn" style="background:#6c757d; padding:4px 10px; font-size:11px; margin-top:5px;" onclick="addPociagRow('${e.id}')">+ DODAJ POCIĄG</button>
             </div>
         `;
         document.getElementById('formList').appendChild(div);
-        dbData.push(e);
         e.pociagi.forEach(p => addPociagRow(e.id, p.nr, p.typ));
     }
 
@@ -137,13 +174,13 @@
         const row = document.createElement('div');
         row.className = 'p-row';
         row.innerHTML = `
-            <input type="text" placeholder="Numer" value="${nr}" oninput="syncPociagi('${eId}')">
-            <select onchange="syncPociagi('${eId}')">
+            <input type="text" placeholder="Nr" value="${nr}" oninput="syncPociagi('${eId}')" style="width: 150px;">
+            <select onchange="syncPociagi('${eId}')" style="width: 100px;">
                 <option value="PNP" ${typ==='PNP'?'selected':''}>PNP</option>
                 <option value="W" ${typ==='W'?'selected':''}>W</option>
                 <option value="L" ${typ==='L'?'selected':''}>L</option>
             </select>
-            <button onclick="this.parentElement.remove(); syncPociagi('${eId}')">✖</button>
+            <button class="btn btn-del" onclick="this.parentElement.remove(); syncPociagi('${eId}')" style="padding: 8px;">✖</button>
         `;
         cont.appendChild(row);
         syncPociagi(eId);
@@ -159,12 +196,13 @@
 
     function updateVal(id, field, val) {
         const entry = dbData.find(x => x.id == id);
-        entry[field] = val;
+        if(entry) entry[field] = val;
         updateExcel();
     }
 
     function syncPociagi(id) {
         const entry = dbData.find(x => x.id == id);
+        if(!entry) return;
         const rows = document.getElementById(`pocs-${id}`).querySelectorAll('.p-row');
         entry.pociagi = Array.from(rows).map(r => ({
             nr: r.querySelector('input').value,
@@ -173,15 +211,15 @@
         updateExcel();
     }
 
+    function duplicate(id) {
+        const entry = dbData.find(x => x.id == id);
+        addEntry(entry);
+    }
+
     function removeEntry(id) {
         dbData = dbData.filter(x => x.id != id);
         document.getElementById(`card-${id}`).remove();
         updateExcel();
-    }
-
-    function duplicate(id) {
-        const entry = dbData.find(x => x.id == id);
-        addEntry(entry);
     }
 
     function updateExcel() {
@@ -190,17 +228,14 @@
         dbData.forEach(e => {
             const tr = document.createElement('tr');
             const dayNames = ['Nd','Pn','Wt','Śr','Cz','Pt','Sb'];
-            const activeDays = e.days.sort().map(d => dayNames[d]).join(', ');
-            
             tr.innerHTML = `
                 <td><b>${e.kod || '---'}</b></td>
                 <td>${e.miejsce || '---'}</td>
-                <td><small>${activeDays}</small></td>
-                <td><small>${e.from} / ${e.until}</small></td>
-                <td>${e.pociagi.map(p => `${p.nr}(${p.typ})`).join(', ')}</td>
-                <td>
-                    <button class="btn btn-copy" onclick="duplicate('${e.id}')">DUPLIKUJ</button>
-                </td>
+                <td><small>${e.days.sort().map(d => dayNames[d]).join(', ')}</small></td>
+                <td><small>${e.from || '...'} / ${e.until || '...'}</small></td>
+                <td><small>${e.excluded || ''}</small></td>
+                <td><small>${e.pociagi.map(p => `${p.nr}(${p.typ})`).join(', ')}</small></td>
+                <td><button class="btn btn-copy" onclick="duplicate('${e.id}')">KOPIUJ</button></td>
             `;
             body.appendChild(tr);
         });
@@ -209,10 +244,9 @@
     function exportJSON() {
         const adminDate = document.getElementById('adminDate').value;
         const finalObj = {
-            metadata: { generatedAt: adminDate, version: "1.29" },
+            metadata: { generatedAt: adminDate, version: "1.31", author: "Piotr M 🚂" },
             sluzby: {}
         };
-        
         dbData.forEach(e => {
             if(!e.kod) return;
             finalObj.sluzby[e.kod] = {
@@ -220,14 +254,15 @@
                 validFrom: e.from,
                 validUntil: e.until,
                 days: e.days,
+                excluded: e.excluded.split(',').map(s => s.trim()).filter(s => s !== ""),
+                additional: e.additional.split(',').map(s => s.trim()).filter(s => s !== ""),
                 pociagi: e.pociagi
             };
         });
-
         const blob = new Blob([JSON.stringify(finalObj, null, 2)], {type: "application/json"});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `szczegoly_sluzb_${adminDate || 'nowy'}.json`;
+        a.download = `szczegoly_sluzb_${adminDate || 'edit'}.json`;
         a.click();
     }
 </script>
