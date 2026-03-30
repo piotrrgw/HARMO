@@ -1,0 +1,874 @@
+{
+  "metadata": {
+    "generatedAt": "2026-03-08",
+    "version": "1.31",
+    "author": "Piotr M 🚂"
+  },
+  "sluzby": {
+    "KLK101": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-31",
+      "validUntil": "2026-03-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5116",
+          "typ": "W"
+        },
+        {
+          "nr": "5116",
+          "typ": "L"
+        },
+        {
+          "nr": "1516",
+          "typ": "L"
+        }
+      ]
+    },
+    "KLK101A": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-02-08",
+      "validUntil": "2026-03-30",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK151": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK102": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1100",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK152": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1100",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK103": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-01",
+      "validUntil": "2026-11-01",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [
+        "06.04.2026"
+      ],
+      "additional": [
+        "05.04.2026"
+      ],
+      "pociagi": [
+        {
+          "nr": "1820",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5114",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK153": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-01",
+      "validUntil": "2026-11-01",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [
+        "06.04.2026"
+      ],
+      "additional": [
+        "05.04.2026"
+      ],
+      "pociagi": [
+        {
+          "nr": "1820",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5114",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK103A": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-01",
+      "validUntil": "2026-11-01",
+      "days": [
+        0
+      ],
+      "excluded": [
+        "05.04.2026"
+      ],
+      "additional": [
+        "06.04.2026"
+      ],
+      "pociagi": [
+        {
+          "nr": "1820",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1902",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK153A": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-01",
+      "validUntil": "2026-11-01",
+      "days": [
+        0
+      ],
+      "excluded": [
+        "05.04.2026"
+      ],
+      "additional": [
+        "06.04.2026"
+      ],
+      "pociagi": [
+        {
+          "nr": "1820",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1902",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK104": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "3822",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8120",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK154": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "3822",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8120",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK105": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "16170",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6130",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK155": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "16170",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6130",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK106": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1522",
+          "typ": "W"
+        },
+        {
+          "nr": "1622",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK156": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1522",
+          "typ": "W"
+        },
+        {
+          "nr": "1622",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK107": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6122",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5122",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK157": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6122",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5122",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK108": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1630",
+          "typ": "PNP"
+        },
+        {
+          "nr": "61170",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK158": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1630",
+          "typ": "PNP"
+        },
+        {
+          "nr": "61170",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK109": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-04-01",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1624",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6124",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK159": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-04-01",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1624",
+          "typ": "PNP"
+        },
+        {
+          "nr": "6124",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK110": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1424",
+          "typ": "PNP"
+        },
+        {
+          "nr": "7318",
+          "typ": "W"
+        },
+        {
+          "nr": "3720",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8114",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK160": {
+      "miejsce_rozpoczecia": "ŁÓDŹ WIDZEW",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1424",
+          "typ": "PNP"
+        },
+        {
+          "nr": "7318",
+          "typ": "W"
+        },
+        {
+          "nr": "3720",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8114",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK111": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1814",
+          "typ": "W"
+        },
+        {
+          "nr": "7320",
+          "typ": "PNP"
+        },
+        {
+          "nr": "36102",
+          "typ": "W"
+        },
+        {
+          "nr": "4124",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK161": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1814",
+          "typ": "W"
+        },
+        {
+          "nr": "7320",
+          "typ": "PNP"
+        },
+        {
+          "nr": "36102",
+          "typ": "W"
+        },
+        {
+          "nr": "4124",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK112": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1328",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3528",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3822",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1902",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK162": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "1328",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3528",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3822",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1902",
+          "typ": "W"
+        }
+      ]
+    },
+    "KLK113": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3128",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK163": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "8322",
+          "typ": "PNP"
+        },
+        {
+          "nr": "3128",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK1": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": []
+    }
+  }
+}
