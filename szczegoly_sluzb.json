@@ -1,0 +1,140 @@
+{
+  "metadata": {
+    "generatedAt": "2026-03-08",
+    "version": "1.29"
+  },
+  "sluzby": {
+    "KLK101": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-31",
+      "validUntil": "2026-03-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5116",
+          "typ": "W"
+        },
+        {
+          "nr": "5116",
+          "typ": "L"
+        },
+        {
+          "nr": "1516",
+          "typ": "L"
+        }
+      ]
+    },
+    "KLK101A": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-02-08",
+      "validUntil": "2026-03-30",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK151": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "pociagi": [
+        {
+          "nr": "1000",
+          "typ": "PNP"
+        },
+        {
+          "nr": "5620",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK102": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "pociagi": [
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1100",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK152": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "pociagi": [
+        {
+          "nr": "6520",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1100",
+          "typ": "PNP"
+        }
+      ]
+    }
+  }
+}
