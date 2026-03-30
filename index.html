@@ -3,312 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmonogram Pracy v1.2</title>
+    <title>Harmonogram Pracy v1.25</title>
     <style>
-        /* Zmienne kolorystyczne i ustawienia dostępności (WCAG) */
         :root {
-            --bg-body: #f4f6f9;
-            --text-main: #333;
-            --primary: #0056b3;
-            --border: #dee2e6;
-            --bg-table-head: #0056b3;
-            --text-table-head: #ffffff;
+            --bg: #fff;
+            --text: #000;
+            --primary: #004085;
+            --danger: #d63031;
+            --border: #000;
         }
 
-        body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            line-height: 1.5;
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        h1, h2 { text-align: center; color: var(--text-main); margin-bottom: 20px; }
-
-        /* Panel kontrolny */
-        .controls {
-            background: #e9ecef;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .status-box { font-weight: 600; font-size: 0.95rem; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #ccc; color: var(--text); }
         
-        input[type="file"] {
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
+        /* Kontenery */
+        main { background: #fff; width: 210mm; margin: 0 auto; min-height: 297mm; padding: 10mm; position: relative; }
+        .no-print { 
+            background: #f8f9fa; border: 2px solid var(--primary); padding: 15px; 
+            margin: 10px auto; width: 210mm; border-radius: 8px; display: flex; gap: 15px; justify-content: center;
         }
 
-        .btn-print {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .btn-print:hover { background-color: #218838; }
-
-        /* Stylizacja tabeli (Czytelność) */
-        .table-wrapper {
-            overflow-x: auto;
-            max-height: 70vh; /* Pozwala na przewijanie tabeli wewnątrz */
-            border: 1px solid var(--border);
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            min-width: 800px; /* Zapobiega zgniataniu na komórkach */
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
-
-        th {
-            background-color: var(--bg-table-head);
-            color: var(--text-table-head);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        tbody tr:nth-child(even) { background-color: #f8f9fa; }
-        tbody tr:hover { background-color: #e2e6ea; }
-
-        /* Etykiety pociągów (Badges) */
-        .train-item { margin-bottom: 4px; display: block; }
-        .train-item:last-child { margin-bottom: 0; }
+        /* STRONA 1 */
+        .page-one { height: 277mm; display: flex; flex-direction: column; page-break-after: always; }
         
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-        .badge-PNP { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
-        .badge-W { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .badge-default { background-color: #e2e3e5; color: #383d41; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5mm; }
+        .name-box { border: 2px solid var(--border); width: 100mm; height: 15mm; padding: 3mm; display: flex; align-items: center; }
+        .name-input { border: none; font-size: 16pt; font-weight: bold; width: 100%; outline: none; }
+        .month-title { font-size: 22pt; font-weight: 900; text-transform: uppercase; margin: 0; }
 
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #6c757d;
-            border-top: 1px solid var(--border);
-            padding-top: 15px;
+        /* KALENDARZ - ROZCIĄGNIĘTY */
+        .calendar-grid { 
+            display: grid; 
+            grid-template-columns: repeat(8, 1fr); 
+            border-top: 2px solid var(--border); 
+            border-left: 2px solid var(--border); 
+            flex-grow: 1; /* To rozciąga kalendarz na całą stronę */
         }
+        .cal-header { 
+            background: #333; color: #fff; font-weight: bold; text-align: center; 
+            padding: 2mm 0; border-right: 1px solid var(--border); border-bottom: 2px solid var(--border); 
+            font-size: 9pt; text-transform: uppercase;
+        }
+        .cal-header.sum-col { background: var(--primary); }
+        
+        .cal-cell { 
+            border-right: 1px solid var(--border); 
+            border-bottom: 1px solid var(--border); 
+            display: flex; flex-direction: column; 
+            padding: 1mm; overflow: hidden;
+        }
+        .cal-cell.empty { background: #f2f2f2; }
+        .cal-cell.sum-cell { background: #eef2ff; justify-content: center; align-items: center; border-right: 2px solid var(--border); }
+        
+        .day-num-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 11pt; margin-bottom: 1mm; }
+        .hol-tag { font-size: 7pt; color: var(--danger); text-align: right; max-width: 70%; line-height: 1; }
 
-        /* Ustawienia pod DRUK A4 Dwustronny */
+        /* Zdarzenia wypełniające kratkę */
+        .cal-event { 
+            flex-grow: 1; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #fff; border-radius: 2px; margin: 0.5mm 0; font-weight: bold; font-size: 9pt;
+            text-align: center; border: 1px solid rgba(0,0,0,0.2);
+        }
+        .cal-event-time { font-size: 7.5pt; font-weight: normal; margin-top: 1px; display: block; }
+
+        /* KOLORY */
+        .ev-blue { background: #0056b3 !important; }
+        .ev-night { background: #000 !important; }
+        .ev-green { background: #28a745 !important; }
+        .ev-yellow { background: #ffc107 !important; color: #000 !important; }
+        .ev-red { background: #dc3545 !important; }
+
+        /* PODSUMOWANIE DOLNE */
+        .summary-bar { 
+            display: grid; grid-template-columns: repeat(6, 1fr); 
+            border: 2px solid var(--border); margin-top: 3mm;
+        }
+        .sum-card { text-align: center; padding: 2mm 0; border-right: 1px solid var(--border); }
+        .sum-card:last-child { border-right: none; }
+        .sum-card span { font-size: 7pt; font-weight: bold; display: block; text-transform: uppercase; }
+        .sum-card b { font-size: 14pt; display: block; }
+
+        /* STRONA 2 */
+        .page-two { padding-top: 5mm; page-break-before: always; }
+        table { width: 100%; border-collapse: collapse; border: 2px solid var(--border); font-size: 9pt; }
+        th { background: #333; color: #fff; padding: 2mm; border: 1px solid var(--border); text-transform: uppercase; }
+        td { padding: 1.5mm 1mm; border: 1px solid var(--border); text-align: center; }
+        .rest-alert { color: var(--danger); font-weight: bold; font-size: 8pt; display: block; margin-top: 1mm; }
+
         @media print {
-            @page { size: A4 portrait; margin: 15mm; }
-            body { background: #fff; padding: 0; }
-            main { box-shadow: none; padding: 0; max-width: 100%; border: none; }
+            body { background: none; padding: 0; }
             .no-print { display: none !important; }
-            .table-wrapper { overflow: visible; max-height: none; border: none; }
-            table { page-break-inside: auto; border: 2px solid #000; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            th, td { border: 1px solid #000; padding: 6px; font-size: 10pt; color: #000; }
-            th { background-color: #e0e0e0; color: #000; position: static; }
-            .badge { border: 1px solid #000; background: transparent; color: #000; }
-            tbody tr:nth-child(even) { background-color: transparent; }
+            main { margin: 0; padding: 10mm; width: 210mm; border: none; }
+            .cal-event { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
-<main>
-    <div class="no-print controls">
-        <div>
-            <h2>Wgraj Harmonogram (ICS)</h2>
-            <input type="file" id="fIcs" accept=".ics" aria-label="Wgraj plik z kalendarzem">
-            <div id="jsonStatus" class="status-box" style="margin-top: 10px; color: #856404;">
-                ⏳ Łączenie z serwerem w celu pobrania bazy pociągów...
+<div class="no-print">
+    <input type="file" id="fIcs" accept=".ics">
+    <input type="file" id="fJson" accept=".json">
+    <button onclick="window.print()">DRUKUJ HARMONOGRAM</button>
+</div>
+
+<main id="scheduleApp" style="display: none;">
+    <div class="page-one">
+        <div class="header-row">
+            <div class="month-title" id="monthTitle"></div>
+            <div class="name-box">
+                <input type="text" id="workerName" class="name-input" placeholder="NAZWISKO I IMIĘ">
             </div>
         </div>
-        <div>
-            <button class="btn-print" onclick="window.print()">🖨️ Drukuj Harmonogram A4</button>
+        
+        <div class="calendar-grid" id="calendarGrid"></div>
+        
+        <div class="summary-bar">
+            <div class="sum-card"><span>Służby</span><b id="sCount">0</b></div>
+            <div class="sum-card"><span>Norma</span><b id="sNorm">00:00</b></div>
+            <div class="sum-card"><span>Suma pracy</span><b id="sTotal">00:00</b></div>
+            <div class="sum-card"><span>Nocne</span><b id="sNight">00:00</b></div>
+            <div class="sum-card"><span>Nd/Św</span><b id="sSun">00:00</b></div>
+            <div class="sum-card"><span>Bilans</span><b id="sOver">00:00</b></div>
         </div>
     </div>
 
-    <h2 id="printTitle">Harmonogram Pracy i Obsługi Pociągów</h2>
-    
-    <div class="table-wrapper">
-        <table aria-label="Tabela harmonogramu pracy">
+    <div class="page-two">
+        <h3 style="margin: 0 0 5mm 0; text-transform: uppercase;">Rejestr szczegółowy służb</h3>
+        <table>
             <thead>
                 <tr>
                     <th>Data</th>
-                    <th>Służba</th>
-                    <th>Godziny (ICS)</th>
-                    <th>Pociągi (Nr / Typ)</th>
-                    <th>Relacja (Start / Koniec)</th>
+                    <th>Kod / Opis</th>
+                    <th>Godziny</th>
+                    <th>Praca</th>
+                    <th>Noc</th>
+                    <th>Pociągi</th>
+                    <th>Miejsce</th>
                 </tr>
             </thead>
-            <tbody id="out">
-                <tr><td colspan="5">Wgraj plik kalendarza (.ics), aby wygenerować widok...</td></tr>
-            </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 </main>
 
-<footer class="no-print">
-    Współautorzy: Piotr M 🚂 i Gemini<br>
-    Wersja aplikacji: v1.2
-</footer>
-
 <script>
-    // Wersja: 1.2
-    let events = [];
-    let db = {};
+    const slownik = {
+        "ES": "SZKOLENIA/EGZAMINY", "W": "URLOP WYP.", "Wp": "URLOP ZAL.",
+        "S": "SZKOLENIA", "WŻ": "URLOP NA ŻĄDANIE", "DDW": "DOD. DZIEŃ WOLNY",
+        "T": "URLOP DOD.", "VO": "BADANIA OKR.", "C": "L4", "C5": "L4",
+        "DWŚ": "WOLNE ZA ŚW.", "DW5": "WOLNE (5)", "DWS": "WOLNE (ND/ŚW)"
+    };
 
-    // 1. Automatyczne pobieranie JSON z serwera przy ładowaniu strony
-    window.addEventListener('DOMContentLoaded', async () => {
-        const statusBox = document.getElementById('jsonStatus');
-        try {
-            // Próba pobrania pliku leżącego w tym samym folderze
-            const response = await fetch('szczegoly_sluzb.json');
-            if (response.ok) {
-                db = await response.json();
-                statusBox.innerHTML = "✅ Baza danych (JSON): Pobrano pomyślnie z serwera.";
-                statusBox.style.color = "#155724";
-                // Jeśli użytkownik odświeży stronę, a plik ICS nadal tam jest (w niektórych przeglądarkach), to przerysuje
-                if(events.length > 0) render(); 
-            } else {
-                throw new Error("Nie znaleziono pliku");
-            }
-        } catch (error) {
-            statusBox.innerHTML = "❌ Baza danych (JSON): Nie udało się pobrać. Upewnij się, że plik 'szczegoly_sluzb.json' jest na serwerze.";
-            statusBox.style.color = "#721c24";
-        }
-    });
+    let events = [], db = {};
+    const months = ["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"];
 
-    // 2. Obsługa ręcznie wgrywanego pliku ICS
-    document.getElementById('fIcs').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    function getEaster(y){const f=Math.floor,G=y%19,C=f(y/100),H=(C-f(C/4)-f((8*C+13)/25)+19*G+15)%30,I=H-f(H/28)*(1-f(29/(H+1))*f((21-G)/11)),J=(y+f(y/4)+I+2-C+f(C/4))%7,L=I-J,m=3+f((L+40)/44),d=L+28-31*f(m/4);return new Date(y,m-1,d);}
+    function getHols(y){
+        const e=getEaster(y), em=new Date(y,e.getMonth(),e.getDate()+1), cc=new Date(y,e.getMonth(),e.getDate()+60);
+        return {"01-01":"Nowy Rok","01-06":"Trzech Króli","05-01":"1 Maja","05-03":"3 Maja","08-15":"Wniebowzięcie","11-01":"Wsz. Świętych","11-11":"Niepodległości","12-25":"Boże Nar.","12-26":"Boże Nar.",[`${String(e.getMonth()+1).padStart(2,'0')}-${String(e.getDate()).padStart(2,'0')}`]:"Wielkanoc",[`${String(em.getMonth()+1).padStart(2,'0')}-${String(em.getDate()).padStart(2,'0')}`]:"Pon. Wielk.",[`${String(cc.getMonth()+1).padStart(2,'0')}-${String(cc.getDate()).padStart(2,'0')}`]:"Boże Ciało"};
+    }
+    function fmtHM(min){const s=min<0?"-":"",a=Math.abs(min);return s+String(Math.floor(a/60)).padStart(2,'0')+":"+String(a%60).padStart(2,'0');}
+
+    document.getElementById('fJson').onchange = e => {
         const reader = new FileReader();
-        reader.onload = (f) => { 
-            parseIcs(f.target.result); 
-            render(); 
-        };
-        reader.readAsText(file);
-    });
+        reader.onload = f => { db = JSON.parse(f.target.result); render(); };
+        reader.readAsText(e.target.files[0]);
+    };
 
-    // 3. Parsowanie ICS
-    function parseIcs(data) {
+    document.getElementById('fIcs').onchange = e => {
+        const reader = new FileReader();
+        reader.onload = f => { parseIcs(f.target.result); render(); };
+        reader.readAsText(e.target.files[0]);
+    };
+
+    function parseIcs(data){
         events = [];
-        const parts = data.split('BEGIN:VEVENT');
-        parts.shift(); // Usuwa nagłówek kalendarza
-        parts.forEach(p => {
-            const summaryMatch = p.match(/SUMMARY:(.*)/);
-            const startMatch = p.match(/DTSTART(?:;TZID=[^:]+)?(?:;VALUE=DATE)?:(\d{8}T\d{6}Z?|\d{8})/);
-            const endMatch = p.match(/DTEND(?:;TZID=[^:]+)?(?:;VALUE=DATE)?:(\d{8}T\d{6}Z?|\d{8})/);
-            
-            if(summaryMatch && startMatch) {
-                events.push({ 
-                    s: summaryMatch[1].trim(), 
-                    dStart: startMatch[1], 
-                    dEnd: endMatch ? endMatch[1] : startMatch[1] 
-                });
-            }
+        data.split('BEGIN:VEVENT').slice(1).forEach(b => {
+            const sum = b.match(/SUMMARY:(.*)/)?.[1]?.trim();
+            const start = b.match(/DTSTART(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
+            const end = b.match(/DTEND(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
+            if(sum && start) events.push({s:sum, dS:start, dE:end||start});
         });
-        // Sortowanie chronologiczne po dacie
-        events.sort((a,b) => a.dStart.localeCompare(b.dStart));
+        events.sort((a,b)=>a.dS.localeCompare(b.dS));
     }
 
-    // 4. Renderowanie tabeli
-    function render() {
-        const tbody = document.getElementById('out');
-        tbody.innerHTML = '';
-        
-        if (events.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Brak zdarzeń w pliku ICS.</td></tr>';
-            return;
+    function getStyle(ev) {
+        const t = ev.s.toUpperCase().trim();
+        if (["W","WP","WŻ","T","C","C5","DWŚ"].includes(t)) return 'ev-red';
+        if (t === 'DW5') return 'ev-green';
+        if (t === 'DWS') return 'ev-yellow';
+        if (["S","ES","VO"].includes(t)) return 'ev-blue';
+        if (ev.dS.includes('T') && ev.dE.includes('T') && ev.dS.substring(0,8) !== ev.dE.substring(0,8)) {
+            let nMin = 0, cur = new Date(2000,0,1,parseInt(ev.dS.substring(9,11)),parseInt(ev.dS.substring(11,13)));
+            let stop = new Date(2000,0,2,parseInt(ev.dE.substring(9,11)),parseInt(ev.dE.substring(11,13)));
+            while(cur < stop){ if(cur.getHours()>=22 || cur.getHours()<6) nMin++; cur.setMinutes(cur.getMinutes()+1); }
+            if(nMin >= 360) return 'ev-night';
         }
-        
-        events.forEach(ev => {
-            // Formatowanie daty dla czytelności z ICS
-            const dateRaw = ev.dStart.substring(0,8);
-            const dateFmt = `${dateRaw.substring(6,8)}.${dateRaw.substring(4,6)}.${dateRaw.substring(0,4)}`;
-            const dayStr = `${dateRaw.substring(0,4)}-${dateRaw.substring(4,6)}-${dateRaw.substring(6,8)}`;
-            
-            const d = db[ev.s];
-            
-            // Logika filtrowania z bazy (Zakresy i wykluczenia)
-            if(d) {
-                if(d.validFrom && dayStr < d.validFrom) return;
-                if(d.validUntil && dayStr > d.validUntil) return;
-                if(d.excluded && d.excluded.includes(dayStr)) return;
-            }
+        return 'ev-blue';
+    }
 
-            // Tworzenie "Odznak" dla pociągów
-            let pociagiHtml = '<span style="color: #999;">-</span>';
-            if(d && d.pociagi && d.pociagi.length > 0) {
-                pociagiHtml = d.pociagi.map(p => {
-                    let badgeClass = "badge-default";
-                    if(p.typ.toUpperCase() === "PNP") badgeClass = "badge-PNP";
-                    if(p.typ.toUpperCase() === "W") badgeClass = "badge-W";
-                    
-                    return `<span class="train-item">${p.nr} <span class="badge ${badgeClass}">${p.typ}</span></span>`;
-                }).join('');
-            }
+    function render(){
+        if(!events.length) return;
+        document.getElementById('scheduleApp').style.display='block';
+        const Y = parseInt(events[0].dS.substring(0,4)), M = parseInt(events[0].dS.substring(4,6))-1;
+        document.getElementById('monthTitle').innerText = months[M] + " " + Y;
 
-            // Formatowanie godzin rozpoczęcia/zakończenia z ICS
-            let timeStr = "Cały dzień";
-            if(ev.dStart.includes('T')) {
-                const sH = ev.dStart.substring(9,11);
-                const sM = ev.dStart.substring(11,13);
-                timeStr = `${sH}:${sM}`;
-                
-                if(ev.dEnd && ev.dEnd.includes('T')) {
-                    const eH = ev.dEnd.substring(9,11);
-                    const eM = ev.dEnd.substring(11,13);
-                    timeStr += ` - ${eH}:${eM}`;
+        const hols = getHols(Y), daysInM = new Date(Y, M+1, 0).getDate();
+        let workD = 0;
+        for(let i=1; i<=daysInM; i++){
+            const d = new Date(Y,M,i), k = `${String(M+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+            if(d.getDay()!==0 && d.getDay()!==6 && !Object.keys(hols).includes(k)) workD++;
+        }
+        document.getElementById('sNorm').innerText = fmtHM(workD * 480);
+
+        const cal = document.getElementById('calendarGrid'); cal.innerHTML = '';
+        ['PN','WT','ŚR','CZ','PT','SB','ND','SUMA'].forEach(h => cal.innerHTML += `<div class="cal-header ${h==='SUMA'?'sum-col':''}">${h}</div>`);
+
+        let firstDay = (new Date(Y, M, 1).getDay() || 7) - 1;
+        for(let i=0; i<firstDay; i++) cal.innerHTML += '<div class="cal-cell empty"></div>';
+
+        let weekly = {};
+        let totM = 0, nitM = 0, sunM = 0, count = 0, lastE = null;
+
+        for(let i=1; i<=daysInM; i++){
+            const dayKey = `${Y}${String(M+1).padStart(2,'0')}${String(i).padStart(2,'0')}`;
+            const holKey = `${String(M+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+            const dayEvs = events.filter(e => e.dS.substring(0,8) === dayKey);
+            const wk = Math.ceil((i + firstDay) / 7);
+            if(!weekly[wk]) weekly[wk] = {work:0, rest:0, lastE:null};
+
+            let html = `<div class="cal-cell"><div class="day-num-row"><span>${i}</span><span class="hol-tag">${hols[holKey]||''}</span></div>`;
+            dayEvs.forEach(ev => {
+                const st = getStyle(ev);
+                let timeStr = ev.dS.includes('T') ? `<span class="cal-event-time">${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)} - ${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</span>` : '';
+                html += `<div class="cal-event ${st}">${st==='ev-night'?'🌙 ':''}${ev.s}${timeStr}</div>`;
+                if(ev.dS.includes('T')){
+                    const sO = new Date(Y,M,parseInt(ev.dS.substring(6,8)),parseInt(ev.dS.substring(9,11)),parseInt(ev.dS.substring(11,13)));
+                    const eO = new Date(Y,M,parseInt(ev.dE.substring(6,8)),parseInt(ev.dE.substring(9,11)),parseInt(ev.dE.substring(11,13)));
+                    weekly[wk].work += (eO - sO)/60000;
+                    if(weekly[wk].lastE) weekly[wk].rest = Math.max(weekly[wk].rest, (sO - weekly[wk].lastE)/60000);
+                    weekly[wk].lastE = eO;
                 }
-            }
+            });
+            cal.innerHTML += html + '</div>';
 
-            // Tworzenie wiersza
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${dateFmt}</strong></td>
-                <td><strong>${ev.s}</strong></td>
-                <td>${timeStr}</td>
-                <td>${pociagiHtml}</td>
-                <td>${d ? (d.miejsce_rozpoczecia + ' ➔ ' + d.miejsce_zakonczenia) : '<span style="color: #999;">-</span>'}</td>
-            `;
-            tbody.appendChild(tr);
+            if(new Date(Y,M,i).getDay() === 0 || i === daysInM){
+                if(i === daysInM && new Date(Y,M,i).getDay() !== 0) {
+                    let fill = 7 - (new Date(Y,M,i).getDay() || 7);
+                    for(let j=0; j < fill; j++) cal.innerHTML += '<div class="cal-cell empty"></div>';
+                }
+                cal.innerHTML += `<div class="cal-cell sum-cell">PRACA:<br>${fmtHM(weekly[wk].work)}<br>ODP:<br>${weekly[wk].work>0?fmtHM(weekly[wk].rest):'---'}</div>`;
+            }
+        }
+
+        const b = document.getElementById('tableBody'); b.innerHTML = ''; lastE = null;
+        events.forEach(ev => {
+            if(!ev.dS.includes('T')) return;
+            count++;
+            const sO = new Date(Y,M,parseInt(ev.dS.substring(6,8)),parseInt(ev.dS.substring(9,11)),parseInt(ev.dS.substring(11,13)));
+            const eO = new Date(Y,M,parseInt(ev.dE.substring(6,8)),parseInt(ev.dE.substring(9,11)),parseInt(ev.dE.substring(11,13)));
+            const dur = (eO - sO)/60000; totM += dur;
+            let n = 0, cur = new Date(sO);
+            while(cur < eO){
+                if(cur.getHours()>=22 || cur.getHours()<6) n++;
+                cur.setMinutes(cur.getMinutes()+1);
+            }
+            if(new Date(sO).getDay()===0 || Object.keys(hols).includes(`${String(sO.getMonth()+1).padStart(2,'0')}-${String(sO.getDate()).padStart(2,'0')}`)) sunM += dur;
+            nitM += n;
+            let alert = (lastE && (sO - lastE)/60000 < 720) ? `<span class="rest-alert">⚠️ ODP: ${fmtHM((sO - lastE)/60000)}</span>` : ""; lastE = eO;
+            const d = db[ev.s] || {miejsce_rozpoczecia:"-", pociagi:[]};
+            b.innerHTML += `<tr><td>${ev.dS.substring(6,8)}.${ev.dS.substring(4,6)}</td><td style="text-align:left;"><b>${ev.s}</b><br>${slownik[ev.s]||''}</td><td>${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</td><td>${fmtHM(dur)}</td><td>${n>0?fmtHM(n):'-'}</td><td>${d.pociagi.map(p=>p.nr).join(', ')||'-'}</td><td>${d.miejsce_rozpoczecia}${alert}</td></tr>`;
         });
+        document.getElementById('sCount').innerText = count;
+        document.getElementById('sTotal').innerText = fmtHM(totM);
+        document.getElementById('sNight').innerText = fmtHM(nitM);
+        document.getElementById('sSun').innerText = fmtHM(sunM/60); // Proste przybliżenie godzin Nd/Św
+        document.getElementById('sOver').innerText = fmtHM(totM - (workD * 480));
     }
 </script>
 </body>
