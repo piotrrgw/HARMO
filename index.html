@@ -3,193 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmonogram Pracy v1.33</title>
+    <title>Harmonogram Pracy v1.34</title>
     <style>
         :root {
             --primary: #0056b3;
             --secondary: #2c3e50;
             --success: #28a745;
             --danger: #d63031;
-            --border-color: #000;
+            --border: #000;
             --ev-blue: #2980b9;
             --ev-night: #1a1a1a;
             --ev-green: #27ae60;
-            --ev-yellow: #f1c40f;
+            --ev-yellow: #f39c12;
             --ev-red: #c0392b;
         }
 
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         
         body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #f4f7f9; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; padding: 0; 
+            background-color: #f0f2f5; 
             color: #000;
             font-size: 11pt;
         }
 
-        /* INTERFEJS UŻYTKOWNIKA */
+        /* UI */
         .no-print {
             background: #fff;
-            padding: 15px 30px;
-            border-bottom: 4px solid var(--primary);
+            padding: 15px 40px;
+            border-bottom: 5px solid var(--primary);
             display: flex;
-            gap: 25px;
+            gap: 30px;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .input-group label {
-            font-size: 8pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #666;
-        }
-
+        .upload-group { display: flex; flex-direction: column; gap: 5px; }
+        .upload-group label { font-size: 8pt; font-weight: bold; color: #666; text-transform: uppercase; }
+        
         .btn-print {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 10pt;
-            transition: 0.2s;
+            background: var(--success); color: white; border: none; padding: 12px 30px;
+            font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;
         }
+        .btn-print:hover { background: #218838; transform: translateY(-1px); }
 
-        .btn-print:hover { background: #218838; }
-
-        /* KONTENER WYDRUKU */
+        /* WYDRUK KONTENER */
         main {
             background: #fff;
             width: 210mm;
             margin: 20px auto;
-            padding: 10mm;
+            padding: 0; /* Marginesy sterowane wewnątrz stron */
             position: relative;
         }
 
         /* STRONA 1: KALENDARZ */
         .page-one {
-            height: 275mm;
+            width: 210mm;
+            height: 297mm; /* Sztywne A4 */
+            padding: 10mm;
             display: flex;
             flex-direction: column;
             page-break-after: always;
             overflow: hidden;
+            border-bottom: 1px dashed #ccc; /* Tylko podgląd */
         }
 
         .header-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
             margin-bottom: 5mm;
         }
 
-        .month-title {
-            font-size: 24pt;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: var(--secondary);
-        }
-
+        .month-title { font-size: 26pt; font-weight: 900; text-transform: uppercase; color: var(--secondary); margin: 0; }
+        
         .worker-box {
-            border: 2.5px solid var(--border-color);
-            padding: 8px;
-            width: 450px;
-            height: 50px;
+            border: 3px solid var(--border);
+            padding: 10px;
+            width: 480px;
+            height: 55px;
             display: flex;
             align-items: center;
         }
 
         .name-input {
-            border: none;
-            font-size: 16pt;
-            font-weight: bold;
-            width: 100%;
-            outline: none;
-            text-transform: uppercase;
-            background: transparent;
+            border: none; font-size: 17pt; font-weight: bold; width: 100%;
+            outline: none; text-transform: uppercase; background: transparent;
         }
 
         /* KALENDARZ */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            border-top: 2.5px solid var(--border-color);
-            border-left: 2.5px solid var(--border-color);
+            border-top: 3px solid var(--border);
+            border-left: 3px solid var(--border);
             flex-grow: 1;
         }
 
         .cal-header {
-            background: #222;
-            color: #fff;
-            font-weight: bold;
-            text-align: center;
-            padding: 8px 0;
-            border-right: 1px solid var(--border-color);
-            border-bottom: 2.5px solid var(--border-color);
-            font-size: 9pt;
+            background: #333; color: #fff; font-weight: bold; text-align: center;
+            padding: 10px 0; border-right: 1px solid var(--border); border-bottom: 3px solid var(--border);
+            font-size: 9pt; text-transform: uppercase;
         }
-
         .cal-header.sum-col { background: var(--primary); }
 
         .cal-cell {
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 0; /* Kluczowe dla zmieszczenia na stronie */
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            background: #fff; position: relative;
         }
-
+        .cal-cell.empty { background: #f8f8f8; }
         .cal-cell.sum-cell {
-            background: #eef2ff;
-            border-right: 2.5px solid var(--border-color);
-            justify-content: center;
-            text-align: center;
-            font-size: 10pt;
-            font-weight: bold;
+            background: #eef2ff; border-right: 3px solid var(--border);
+            justify-content: center; text-align: center; font-size: 10.5pt; font-weight: bold;
         }
 
-        .day-header {
-            display: flex;
-            flex-direction: column;
-            padding: 3px 6px;
-        }
+        .day-header { display: flex; flex-direction: column; padding: 4px 6px; }
+        .day-num { font-weight: 900; font-size: 16pt; line-height: 1; }
+        .hol-name { font-size: 7.5pt; color: var(--danger); font-weight: bold; text-transform: uppercase; margin-top: 2px; }
 
-        .day-num { font-weight: 900; font-size: 15pt; }
-        .hol-name { font-size: 7pt; color: var(--danger); font-weight: bold; text-transform: uppercase; }
-
+        .events-wrap { flex-grow: 1; display: flex; flex-direction: column; }
         .cal-event {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 1px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 11pt;
-            border: 1px solid rgba(0,0,0,0.1);
-            text-align: center;
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; margin: 1px; color: #fff; font-weight: bold;
+            font-size: 11pt; border: 1px solid rgba(0,0,0,0.1); text-align: center;
         }
-
         .cal-event-time {
-            font-size: 10pt;
-            font-weight: 900;
-            background: rgba(0,0,0,0.15);
-            width: 100%;
-            padding: 2px 0;
+            font-size: 11pt; font-weight: 900; background: rgba(0,0,0,0.2);
+            width: 100%; padding: 3px 0; margin-top: 2px;
         }
 
         .ev-blue { background: var(--ev-blue) !important; }
@@ -198,61 +143,41 @@
         .ev-yellow { background: var(--ev-yellow) !important; color: #000 !important; }
         .ev-red { background: var(--ev-red) !important; }
 
-        /* PODSUMOWANIE DOLNE */
+        /* SUMY DOLNE */
         .summary-bar {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            border: 2.5px solid var(--border-color);
-            margin-top: 5mm;
-            background: #000;
-            color: #fff;
+            display: grid; grid-template-columns: repeat(6, 1fr);
+            border: 3px solid var(--border); margin-top: 5mm; background: #000; color: #fff;
         }
-
-        .sum-card { text-align: center; padding: 10px 0; border-right: 1px solid #444; }
-        .sum-card:last-child { border-right: none; }
-        .sum-card span { font-size: 7pt; display: block; text-transform: uppercase; opacity: 0.7; }
-        .sum-card b { font-size: 18pt; color: #00d1b2; display: block; }
+        .sum-card { text-align: center; padding: 10px 2px; border-right: 1px solid #444; }
+        .sum-card span { font-size: 7.5pt; display: block; text-transform: uppercase; opacity: 0.8; }
+        .sum-card b { font-size: 18pt; color: #00d1b2; display: block; line-height: 1; margin-top: 3px; }
 
         /* STRONA 2: REJESTR */
         .page-two {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm;
             page-break-before: always;
-            padding-top: 5mm;
-            display: flex;
-            flex-direction: column;
-            min-height: 275mm;
+            display: flex; flex-direction: column;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 2.5px solid var(--border-color);
-            font-size: 10pt;
-        }
+        table { width: 100%; border-collapse: collapse; border: 3px solid var(--border); font-size: 10pt; }
+        th { background: #333; color: #fff; padding: 10px; border: 1px solid #fff; font-size: 8.5pt; text-transform: uppercase; }
+        td { padding: 5px 3px; border: 1px solid var(--border); text-align: center; }
 
-        th { background: #222; color: #fff; padding: 10px; border: 1px solid #fff; text-transform: uppercase; font-size: 8pt; }
-        td { padding: 6px 4px; border: 1px solid var(--border-color); text-align: center; }
-
-        .rest-alert { color: var(--danger); font-weight: bold; font-size: 8pt; display: block; margin-top: 3px; }
-
-        .badge { font-size: 7pt; font-weight: bold; padding: 2px 4px; border-radius: 3px; margin-left: 3px; }
-        .badge-pnp { background: #e2eafc; color: #0056b3; }
-        .badge-w { background: #d4edda; color: #155724; }
+        .rest-alert { color: var(--danger); font-weight: bold; font-size: 8.5pt; display: block; margin-top: 2px; }
 
         /* STOPKA PRAWNA */
-        .legal-footer {
-            margin-top: auto;
-            padding-top: 10px;
-            border-top: 1px solid #ccc;
-            font-size: 8pt;
-            color: #555;
-            text-align: justify;
-            line-height: 1.3;
+        .legal-note {
+            margin-top: auto; padding-top: 10px; border-top: 1px solid #000;
+            font-size: 8.5pt; color: #333; text-align: justify; line-height: 1.4;
         }
 
         @media print {
             body { background: #fff; }
             .no-print { display: none !important; }
-            main { width: 210mm; padding: 10mm; margin: 0; box-shadow: none; }
+            main { width: 210mm; margin: 0; box-shadow: none; }
+            .page-one, .page-two { border: none; }
             .summary-bar { color: #000; background: #fff; }
             .sum-card b { color: #000; }
         }
@@ -261,15 +186,16 @@
 <body>
 
 <div class="no-print">
-    <div class="input-group">
+    <div class="upload-group">
         <label>Harmonogram (ICS)</label>
         <input type="file" id="fIcs" accept=".ics">
     </div>
-    <div class="input-group">
-        <label>Baza Pociągów (JSON)</label>
+    <div class="upload-group">
+        <label>Baza Danych (JSON)</label>
         <input type="file" id="fJson" accept=".json">
     </div>
-    <button class="btn-print" onclick="window.print()">Drukuj Grafik</button>
+    <button class="btn-print" onclick="window.print()">DRUKUJ HARMONOGRAM (A4)</button>
+    <div id="statusInfo" style="font-size: 8pt; color: var(--success); font-weight: bold;"></div>
 </div>
 
 <main id="scheduleApp" style="display: none;">
@@ -277,7 +203,7 @@
         <div class="header-row">
             <h1 class="month-title" id="monthTitle">Miesiąc Rok</h1>
             <div class="worker-box">
-                <input type="text" id="workerName" class="name-input" placeholder="Nazwisko i Imię">
+                <input type="text" id="workerName" class="name-input" placeholder="Wpisz Nazwisko i Imię">
             </div>
         </div>
         
@@ -294,55 +220,63 @@
     </div>
 
     <div class="page-two">
-        <h2 style="font-size: 14pt; text-transform: uppercase; margin-bottom: 10px;">Szczegółowy Rejestr Służb</h2>
+        <h2 style="font-size: 15pt; text-transform: uppercase; margin-bottom: 15px; border-left: 10px solid var(--primary); padding-left: 15px;">Szczegółowy Rejestr Służb</h2>
         <table>
             <thead>
                 <tr>
                     <th width="8%">Data</th>
-                    <th width="20%">Służba</th>
+                    <th width="18%">Służba</th>
                     <th width="14%">Godziny</th>
                     <th width="9%">Praca</th>
                     <th width="9%">Noc</th>
-                    <th width="25%">Pociągi</th>
+                    <th width="27%">Pociągi</th>
                     <th width="15%">Start</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
         </table>
         
-        <div class="legal-footer">
-            <strong>UWAGA:</strong> Prezentowane w sekcji "Szczegółowy Rejestr Służb" informacje dotyczące pociągów, miejsc rozpoczęcia oraz godzin poszczególnych czynności mają charakter wyłącznie <strong>poglądowy</strong>. Podstawowym i jedynym obowiązującym dokumentem określającym szczegółowy plan pracy, numery pociągów oraz wytyczne operacyjne jest aktualny plan pracy zamieszczony w aplikacji <strong>Teczka Konduktora</strong> oraz systemie <strong>IVU</strong>. Pracownik zobowiązany jest do każdorazowej weryfikacji danych z systemami służbowymi przed rozpoczęciem pracy.
-            <div style="margin-top: 5px; text-align: right; font-style: italic;">
-                Współautorzy: Piotr M 🚂 & Gemini | Wersja aplikacji: v1.33
+        <div class="legal-note">
+            <strong>OŚWIADCZENIE:</strong> Prezentowane w sekcji "Szczegółowy Rejestr Służb" informacje dotyczące numerów pociągów, miejsc rozpoczęcia oraz godzin poszczególnych czynności mają charakter wyłącznie <strong>poglądowy</strong>. Podstawowym, nadrzędnym i jedynym obowiązującym dokumentem określającym szczegółowy plan pracy oraz wytyczne operacyjne jest aktualny plan pracy zamieszczony w aplikacji <strong>Teczka Konduktora</strong> oraz systemie <strong>IVU</strong>. Pracownik zobowiązany jest do każdorazowej weryfikacji danych z systemami służbowymi przed rozpoczęciem czynności.
+            <div style="margin-top: 5px; text-align: right; font-style: italic; font-size: 7pt;">
+                System: Piotr M 🚂 & Gemini | Wersja: v1.34 | Status Bazy: <span id="dbSource">Wczytano automatycznie</span>
             </div>
         </div>
     </div>
 </main>
 
 <script>
-    /**
-     * LOGIKA APLIKACJI v1.33
-     */
-    let events = [];
-    let db = { sluzby: {} };
+    let events = [], db = { sluzby: {} };
     const months = ["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"];
 
-    // Automatyczne pobieranie bazy przy starcie
+    // INTELIGENTNE WCZYTYWANIE BAZY
     window.addEventListener('load', async () => {
+        // 1. Próbuj z serwera (stała nazwa)
         try {
-            const response = await fetch('szczegoly_sluzb.json', { cache: 'no-cache' });
-            if (response.ok) {
-                db = await response.json();
-                console.log("Baza wczytana automatycznie.");
-                if (events.length > 0) render();
+            const resp = await fetch('szczegoly_sluzb.json', { cache: 'no-cache' });
+            if (resp.ok) {
+                db = await resp.json();
+                document.getElementById('dbSource').innerText = "Serwer (szczegoly_sluzb.json)";
+                if(events.length) render();
+                return;
             }
-        } catch (e) { console.log("Brak lokalnej bazy JSON, oczekiwanie na plik ręczny."); }
+        } catch (e) {}
+
+        // 2. Próbuj z pamięci przeglądarki (LocalStorage)
+        const savedDB = localStorage.getItem('harmo_db');
+        if (savedDB) {
+            db = JSON.parse(savedDB);
+            document.getElementById('dbSource').innerText = "Pamięć przeglądarki (Ostatnio wgrany)";
+            if(events.length) render();
+        }
     });
 
     document.getElementById('fJson').onchange = e => {
         const reader = new FileReader();
         reader.onload = f => {
             db = JSON.parse(f.target.result);
+            localStorage.setItem('harmo_db', f.target.result); // Zapamiętaj na przyszłość
+            document.getElementById('statusInfo').innerText = "✓ Baza zapisana w pamięci";
             if (events.length > 0) render();
         };
         reader.readAsText(e.target.files[0]);
@@ -350,39 +284,32 @@
 
     document.getElementById('fIcs').onchange = e => {
         const reader = new FileReader();
-        reader.onload = f => {
-            parseIcs(f.target.result);
-            render();
-        };
+        reader.onload = f => { parseIcs(f.target.result); render(); };
         reader.readAsText(e.target.files[0]);
     };
 
     function parseIcs(data) {
         events = [];
-        const blocks = data.split('BEGIN:VEVENT').slice(1);
-        blocks.forEach(b => {
-            const sum = b.match(/SUMMARY:(.*)/)?.[1]?.trim();
-            const start = b.match(/DTSTART(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
-            const end = b.match(/DTEND(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
+        data.split('BEGIN:VEVENT').slice(1).forEach(block => {
+            const sum = block.match(/SUMMARY:(.*)/)?.[1]?.trim();
+            const start = block.match(/DTSTART(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
+            const end = block.match(/DTEND(?:;[^:]*)?:(\d{8}T?\d{0,6})/)?.[1];
             if (sum && start) events.push({ s: sum, dS: start, dE: end || start });
         });
         events.sort((a, b) => a.dS.localeCompare(b.dS));
     }
 
     function getEaster(y) {
-        const f = Math.floor, G = y % 19, C = f(y / 100),
-              H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
-              I = H - f(H / 28) * (1 - f(29 / (H + 1)) * f((21 - G) / 11)),
-              J = (y + f(y / 4) + I + 2 - C + f(C / 4)) % 7,
+        const f = Math.floor, G = y % 19, C = f(y / 100), H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
+              I = H - f(H / 28) * (1 - f(29 / (H + 1)) * f((21 - G) / 11)), J = (y + f(y / 4) + I + 2 - C + f(C / 4)) % 7,
               L = I - J, m = 3 + f((L + 40) / 44), d = L + 28 - 31 * f(m / 4);
         return new Date(y, m - 1, d);
     }
 
-    function getHolidays(y) {
+    function getHols(y) {
         const e = getEaster(y), em = new Date(y, e.getMonth(), e.getDate() + 1), cc = new Date(y, e.getMonth(), e.getDate() + 60);
         return {
-            "01-01": "Nowy Rok", "01-06": "3 Króli", "05-01": "1 Maja", "05-03": "3 Maja", "08-15": "Wniebowzięcie",
-            "11-01": "Wsz. Świętych", "11-11": "Niepodległości", "12-25": "Boże Nar.", "12-26": "Boże Nar.",
+            "01-01":"Nowy Rok","01-06":"3 Króli","05-01":"1 Maja","05-03":"3 Maja","08-15":"Wniebowzięcie","11-01":"Wsz. Świętych","11-11":"Niepodległości","12-25":"Boże Nar.","12-26":"Boże Nar.",
             [`${String(e.getMonth()+1).padStart(2,'0')}-${String(e.getDate()).padStart(2,'0')}`]: "Wielkanoc",
             [`${String(em.getMonth()+1).padStart(2,'0')}-${String(em.getDate()).padStart(2,'0')}`]: "Pon. Wielk.",
             [`${String(cc.getMonth()+1).padStart(2,'0')}-${String(cc.getDate()).padStart(2,'0')}`]: "Boże Ciało"
@@ -397,12 +324,11 @@
     function render() {
         if (!events.length) return;
         document.getElementById('scheduleApp').style.display = 'block';
-
-        const firstWork = events.find(e => e.dS.includes('T')) || events[0];
-        const Y = parseInt(firstWork.dS.substring(0, 4)), M = parseInt(firstWork.dS.substring(4, 6)) - 1;
+        const fWork = events.find(e => e.dS.includes('T')) || events[0];
+        const Y = parseInt(fWork.dS.substring(0, 4)), M = parseInt(fWork.dS.substring(4, 6)) - 1;
         document.getElementById('monthTitle').innerText = months[M] + " " + Y;
 
-        const hols = getHolidays(Y), daysInM = new Date(Y, M + 1, 0).getDate();
+        const hols = getHols(Y), daysInM = new Date(Y, M + 1, 0).getDate();
         let workDays = 0;
         for (let i = 1; i <= daysInM; i++) {
             const d = new Date(Y, M, i), k = `${String(M + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
@@ -411,9 +337,7 @@
         document.getElementById('sNorm').innerText = fmtHM(workDays * 480);
 
         const cal = document.getElementById('calendarGrid'); cal.innerHTML = '';
-        ['PN','WT','ŚR','CZ','PT','SB','ND','SUMA'].forEach(h => {
-            cal.innerHTML += `<div class="cal-header ${h==='SUMA'?'sum-col':''}">${h}</div>`;
-        });
+        ['PN','WT','ŚR','CZ','PT','SB','ND','SUMA'].forEach(h => cal.innerHTML += `<div class="cal-header ${h==='SUMA'?'sum-col':''}">${h}</div>`);
 
         let skip = (new Date(Y, M, 1).getDay() || 7) - 1;
         for (let i = 0; i < skip; i++) cal.innerHTML += '<div class="cal-cell empty"></div>';
@@ -423,22 +347,35 @@
 
         for (let i = 1; i <= daysInM; i++) {
             const dStr = `${Y}${String(M+1).padStart(2,'0')}${String(i).padStart(2,'0')}`;
+            const dateISO = `${Y}-${String(M+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
             const holKey = `${String(M + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             const wk = Math.ceil((i + skip) / 7);
-            if (!weekly[wk]) weekly[wk] = { work: 0, rest: 0, lastE: null };
+            if (!weekly[wk]) weekly[wk] = { work: 0, rest: 0, lastE: null, hasWork: false };
 
-            const dayEvs = events.filter(ev => ev.dS.substring(0, 8) === dStr);
-            let html = `<div class="cal-cell"><div class="day-header"><span class="day-num">${i}</span>${hols[holKey]?`<span class="hol-name">${hols[holKey]}</span>`:''}</div><div style="flex-grow:1; display:flex; flex-direction:column;">`;
+            const dayEvs = events.filter(ev => {
+                if (ev.dS.substring(0, 8) !== dStr) return false;
+                const duty = dbSluzby[ev.s];
+                if (!duty) return true;
+                let v = true;
+                const dOW = new Date(Y, M, i).getDay();
+                if (duty.validFrom && dateISO < duty.validFrom) v = false;
+                if (duty.validUntil && dateISO > duty.validUntil) v = false;
+                if (duty.days && !duty.days.includes(dOW)) v = false;
+                if (duty.additional && duty.additional.includes(dateISO)) v = true;
+                if (duty.excluded && duty.excluded.includes(dateISO)) v = false;
+                return v;
+            });
+
+            let html = `<div class="cal-cell"><div class="day-header"><span class="day-num">${i}</span>${hols[holKey]?`<span class="hol-name">${hols[holKey]}</span>`:''}</div><div class="events-wrap">`;
 
             dayEvs.forEach(ev => {
                 const sO = new Date(Y, M, i, parseInt(ev.dS.substring(9,11)), parseInt(ev.dS.substring(11,13)));
                 const eO = new Date(Y, M, parseInt(ev.dE.substring(6,8)), parseInt(ev.dE.substring(9,11)), parseInt(ev.dE.substring(11,13)));
                 const st = (["W","WP","WŻ","T","C","C5","DWŚ"].includes(ev.s.toUpperCase())) ? 'ev-red' : (ev.s==='DW5'?'ev-green':(ev.s==='DWS'?'ev-yellow':'ev-blue'));
-                
                 html += `<div class="cal-event ${st}">${ev.s}${ev.dS.includes('T')?`<span class="cal-event-time">${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</span>`:''}</div>`;
-                
                 if (ev.dS.includes('T')) {
                     weekly[wk].work += (eO - sO) / 60000;
+                    weekly[wk].hasWork = true;
                     if (weekly[wk].lastE) weekly[wk].rest = Math.max(weekly[wk].rest, (sO - weekly[wk].lastE)/60000);
                     weekly[wk].lastE = eO;
                 }
@@ -453,11 +390,24 @@
             }
         }
 
-        const b = document.getElementById('tableBody'); b.innerHTML = '';
+        const b = document.getElementById('tableBody'); b.innerHTML = ''; lastE = null;
         events.forEach(ev => {
             if (!ev.dS.includes('T')) return;
+            const dIdx = parseInt(ev.dS.substring(6,8));
+            const dateISO = `${Y}-${String(M+1).padStart(2,'0')}-${String(dIdx).padStart(2,'0')}`;
+            const duty = dbSluzby[ev.s];
+            if (duty) {
+                let skipTable = false;
+                const dOW = new Date(Y, M, dIdx).getDay();
+                if (duty.validFrom && dateISO < duty.validFrom) skipTable = true;
+                if (duty.validUntil && dateISO > duty.validUntil) skipTable = true;
+                if (duty.days && !duty.days.includes(dOW)) skipTable = true;
+                if (duty.additional && duty.additional.includes(dateISO)) skipTable = false;
+                if (duty.excluded && duty.excluded.includes(dateISO)) skipTable = true;
+                if (skipTable) return;
+            }
             count++;
-            const sO = new Date(Y, M, parseInt(ev.dS.substring(6,8)), parseInt(ev.dS.substring(9,11)), parseInt(ev.dS.substring(11,13)));
+            const sO = new Date(Y, M, dIdx, parseInt(ev.dS.substring(9,11)), parseInt(ev.dS.substring(11,13)));
             const eO = new Date(Y, M, parseInt(ev.dE.substring(6,8)), parseInt(ev.dE.substring(9,11)), parseInt(ev.dE.substring(11,13)));
             const dur = (eO - sO) / 60000; totM += dur;
             let n = 0, s = 0, cur = new Date(sO);
@@ -468,14 +418,11 @@
             }
             nitM += n; sunM += s;
             let alert = (lastE && (sO - lastE)/60000 < 720) ? `<span class="rest-alert">⚠️ ODP: ${fmtHM((sO - lastE)/60000)}</span>` : ""; lastE = eO;
-            const duty = dbSluzby[ev.s] || { pociagi: [] };
-            b.innerHTML += `<tr><td><b>${ev.dS.substring(6,8)}.${ev.dS.substring(4,6)}</b></td><td><b>${ev.s}</b></td><td>${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</td><td><b>${fmtHM(dur)}</b></td><td>${n>0?fmtHM(n):'-'}</td><td style="text-align:left;">${duty.pociagi.map(p=>`${p.nr}<span class="badge ${p.typ==='W'?'badge-w':'badge-pnp'}">${p.typ}</span>`).join(', ')}</td><td>${duty.miejsce_rozpoczecia||'-'}${alert}</td></tr>`;
+            const info = duty || { pociagi: [] };
+            b.innerHTML += `<tr><td><b>${ev.dS.substring(6,8)}.${ev.dS.substring(4,6)}</b></td><td><b>${ev.s}</b></td><td>${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</td><td><b>${fmtHM(dur)}</b></td><td>${n>0?fmtHM(n):'-'}</td><td style="text-align:left; font-size: 8.5pt;">${info.pociagi.map(p=>`${p.nr} <span style="font-size:7pt; font-weight:bold;">[${p.typ}]</span>`).join(', ')}</td><td>${info.miejsce_rozpoczecia||'-'}${alert}</td></tr>`;
         });
-
-        document.getElementById('sCount').innerText = count;
-        document.getElementById('sTotal').innerText = fmtHM(totM);
-        document.getElementById('sNight').innerText = fmtHM(nitM);
-        document.getElementById('sSun').innerText = fmtHM(sunM);
+        document.getElementById('sCount').innerText = count; document.getElementById('sTotal').innerText = fmtHM(totM);
+        document.getElementById('sNight').innerText = fmtHM(nitM); document.getElementById('sSun').innerText = fmtHM(sunM);
         document.getElementById('sOver').innerText = fmtHM(totM - (workDays * 480));
     }
 </script>
