@@ -7,8 +7,8 @@
   "sluzby": {
     "KLK101": {
       "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
-      "validFrom": "2026-03-31",
-      "validUntil": "2026-03-13",
+      "validFrom": "2026-03-08",
+      "validUntil": "2026-06-13",
       "days": [
         0,
         1,
