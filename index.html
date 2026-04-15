@@ -368,11 +368,22 @@
 
             let html = `<div class="cal-cell"><div class="day-header"><span class="day-num">${i}</span>${hols[holKey]?`<span class="hol-name">${hols[holKey]}</span>`:''}</div><div class="events-wrap">`;
 
-            dayEvs.forEach(ev => {
-                const sO = new Date(Y, M, i, parseInt(ev.dS.substring(9,11)), parseInt(ev.dS.substring(11,13)));
-                const eO = new Date(Y, M, parseInt(ev.dE.substring(6,8)), parseInt(ev.dE.substring(9,11)), parseInt(ev.dE.substring(11,13)));
-                const st = (["W","WP","WŻ","T","C","C5","DWŚ"].includes(ev.s.toUpperCase())) ? 'ev-red' : (ev.s==='DW5'?'ev-green':(ev.s==='DWS'?'ev-yellow':'ev-blue'));
-                html += `<div class="cal-event ${st}">${ev.s}${ev.dS.includes('T')?`<span class="cal-event-time">${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</span>`:''}</div>`;
+           dayEvs.forEach(ev => {
+                const sO = new Date(
+                    parseInt(ev.dS.substring(0,4)), 
+                    parseInt(ev.dS.substring(4,6)) - 1, 
+                    parseInt(ev.dS.substring(6,8)), 
+                    parseInt(ev.dS.substring(9,11)), 
+                    parseInt(ev.dS.substring(11,13))
+                );
+                const eO = new Date(
+                    parseInt(ev.dE.substring(0,4)), 
+                    parseInt(ev.dE.substring(4,6)) - 1, 
+                    parseInt(ev.dE.substring(6,8)), 
+                    parseInt(ev.dE.substring(9,11)), 
+                    parseInt(ev.dE.substring(11,13))
+                );
+                const st = (["W","WP","WŻ","T","C","C5","DWŚ"].includes(ev.s.toUpperCase())) ? 'ev-red' : (ev.s==='DW5'?'ev-green':(ev.s==='DWS'?'ev-yellow':'ev-blue'));    html += `<div class="cal-event ${st}">${ev.s}${ev.dS.includes('T')?`<span class="cal-event-time">${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</span>`:''}</div>`;
                 if (ev.dS.includes('T')) {
                     weekly[wk].work += (eO - sO) / 60000;
                     weekly[wk].hasWork = true;
@@ -407,8 +418,20 @@
                 if (skipTable) return;
             }
             count++;
-            const sO = new Date(Y, M, dIdx, parseInt(ev.dS.substring(9,11)), parseInt(ev.dS.substring(11,13)));
-            const eO = new Date(Y, M, parseInt(ev.dE.substring(6,8)), parseInt(ev.dE.substring(9,11)), parseInt(ev.dE.substring(11,13)));
+            const sO = new Date(
+                parseInt(ev.dS.substring(0,4)), 
+                parseInt(ev.dS.substring(4,6)) - 1, 
+                parseInt(ev.dS.substring(6,8)), 
+                parseInt(ev.dS.substring(9,11)), 
+                parseInt(ev.dS.substring(11,13))
+            );
+            const eO = new Date(
+                parseInt(ev.dE.substring(0,4)), 
+                parseInt(ev.dE.substring(4,6)) - 1, 
+                parseInt(ev.dE.substring(6,8)), 
+                parseInt(ev.dE.substring(9,11)), 
+                parseInt(ev.dE.substring(11,13))
+            );
             const dur = (eO - sO) / 60000; totM += dur;
             let n = 0, s = 0, cur = new Date(sO);
             while (cur < eO) {
@@ -419,7 +442,7 @@
             nitM += n; sunM += s;
             let alert = (lastE && (sO - lastE)/60000 < 720) ? `<span class="rest-alert">⚠️ ODP: ${fmtHM((sO - lastE)/60000)}</span>` : ""; lastE = eO;
             const info = duty || { pociagi: [] };
-            b.innerHTML += `<tr><td><b>${ev.dS.substring(6,8)}.${ev.dS.substring(4,6)}</b></td><td><b>${ev.s}</b></td><td>${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</td><td><b>${fmtHM(dur)}</b></td><td>${n>0?fmtHM(n):'-'}</td><td style="text-align:left; font-size: 8.5pt;">${info.pociagi.map(p=>`${p.nr} <span style="font-size:7pt; font-weight:bold;">[${p.typ}]</span>`).join(', ')}</td><td>${info.miejsce_rozpoczecia||'-'}${alert}</td></tr>`;
+            b.innerHTML += `<tr><td><b>${ev.dS.substring(6,8)}.${ev.dS.substring(4,6)}</b></td><td><b>${ev.s}</b></td><td>${ev.dS.substring(9,11)}:${ev.dS.substring(11,13)}-${ev.dE.substring(9,11)}:${ev.dE.substring(11,13)}</td><td><b>${fmtHM(dur)}</b></td><td>${n>0?fmtHM(n):'-'}</td><td style="text-align:left; font-size: 8.5pt;">${info.pociagi.map(p=>`${p.nr} <span style="font-weight:bold;">[${p.typ}]</span>`).join(', ')}</td><td>${info.miejsce_rozpoczecia||'-'}${alert}</td></tr>`;
         });
         document.getElementById('sCount').innerText = count; document.getElementById('sTotal').innerText = fmtHM(totM);
         document.getElementById('sNight').innerText = fmtHM(nitM); document.getElementById('sSun').innerText = fmtHM(sunM);
