@@ -1959,6 +1959,78 @@
           "typ": "PNP"
         }
       ]
+    },
+    "KLK124": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "",
+      "validUntil": "",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "9102",
+          "typ": "W"
+        },
+        {
+          "nr": "4122",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1102",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8130",
+          "typ": "W"
+        },
+        {
+          "nr": "1910",
+          "typ": "PNP"
+        }
+      ]
+    },
+    "KLK174": {
+      "miejsce_rozpoczecia": "ŁÓDŹ FABRYCZNA",
+      "validFrom": "",
+      "validUntil": "",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "excluded": [],
+      "additional": [],
+      "pociagi": [
+        {
+          "nr": "9102",
+          "typ": "W"
+        },
+        {
+          "nr": "4122",
+          "typ": "PNP"
+        },
+        {
+          "nr": "1102",
+          "typ": "PNP"
+        },
+        {
+          "nr": "8130",
+          "typ": "W"
+        },
+        {
+          "nr": "1910",
+          "typ": "PNP"
+        }
+      ]
     }
   }
 }
